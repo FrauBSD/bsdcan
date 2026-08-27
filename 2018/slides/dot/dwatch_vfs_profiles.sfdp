@@ -1,0 +1,53 @@
+/* vim: set filetype=dot :: Vi/ViM */
+strict digraph {
+
+	/*
+	 * Graph setup and orientation
+	 */
+	margin = 0; // minimize white border
+
+	/*
+	 * Default node attributes
+	 */
+	node [
+		fontname = "Arial",
+		fontsize = 16,
+		fontcolor = "white",
+		shape = box,
+		style = "filled",
+		colorscheme = "set15",
+		penwidth = 0,
+	];
+
+	/*
+	 * Functions
+	 */
+	{
+		node [ fillcolor = 3 ];
+		vop_create;
+		vop_lookup;
+		vop_mkdir;
+		vop_mknod;
+		vop_readdir;
+		vop_remove;
+		vop_rename;
+		vop_rmdir;
+		vop_symlink;
+	};
+
+	/*
+	 * Relationships
+	 */
+	{
+		edge [
+			style = dotted,
+			color = grey50,
+			arrowhead = none,
+		];
+		vop_create -> vop_lookup;
+		vop_create -> vop_mkdir;
+		vop_create -> vop_mknod;
+		vop_create -> vop_remove;
+		vop_create -> vop_rmdir;
+	};
+}

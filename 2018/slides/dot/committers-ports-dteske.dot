@@ -1,0 +1,63 @@
+# $FreeBSD: head/share/misc/committers-ports.dot 334206 2018-05-25 11:49:21Z arrowd $
+
+# This file is meant to list all FreeBSD ports committers and describe the
+# mentor-mentee relationships between them.
+# The graphical output can be generated from this file with the following
+# command:
+# $ dot -T png -o file.png committers-ports.dot
+#
+# The dot binary is part of the graphics/graphviz port.
+
+digraph ports {
+
+	margin = 0;
+
+# Node definitions follow this example:
+#
+#   foo [label="Foo Bar\nfoo@FreeBSD.org\n????/??/??"]
+#
+# ????/??/?? is the date when the commit bit was obtained, usually the one you
+# can find looking at svn logs for the svnadmin/access file.
+# Use YYYY/MM/DD format.
+#
+# For returned commit bits, the node definition will follow this example:
+#
+#   foo [label="Foo Bar\nfoo@FreeBSD.org\n????/??/??\n????/??/??"]
+#
+# The first date is the same as for an active committer, the second date is
+# the date when the commit bit has been returned. Again, check svn logs.
+
+node [color=grey62, style=filled, bgcolor=black];
+
+# Alumni go here.. Try to keep things sorted.
+
+billf [label="Bill Fumerola\nbillf@FreeBSD.org\n1998/11/11\n2006/12/14"]
+jkh [label="Jordan K. Hubbard\njkh@FreeBSD.org\n1993/06/12\n2008/06/13"]
+
+node [color=lightblue2, style=filled, bgcolor=black];
+
+# Current ports committers go here. Try to keep things sorted.
+
+demon [label="Dmitry Sivachenko\ndemon@FreeBSD.org\n2000/11/13"]
+dteske [label="Devin Teske\ndteske@FreeBSD.org\n2018/03/01"]
+imp [label="Warner Losh\nimp@FreeBSD.org\n1996/09/20"]
+mat [label="Mathieu Arnold\nmat@FreeBSD.org\n2003/08/15"]
+sobomax[label="Maxim Sobolev\nsobomax@FreeBSD.org\n2000/05/17"]
+
+# Here are the mentor/mentee relationships.
+# Group together all the mentees for a particular mentor.
+# Keep the list sorted by mentor login.
+
+billf -> sobomax
+
+demon -> mat
+
+imp -> dteske
+
+jkh -> imp
+
+mat -> dteske
+
+sobomax -> demon
+
+}

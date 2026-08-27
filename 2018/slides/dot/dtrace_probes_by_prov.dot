@@ -1,0 +1,136 @@
+strict digraph {
+
+	/*
+	 * Graph setup and orientation
+	 */
+	margin = 0; // minimize white border
+
+	/*
+	 * Default node attributes
+	 */
+	node [
+		fontname = "Arial",
+		fontsize = 16,
+		fontcolor = "white",
+		shape = box,
+		width = "1.33",
+		height = "1.0",
+		fixedsize = true,
+		style = "filled",
+		colorscheme = "set14",
+		penwidth = 0,
+	];
+
+	/*
+	 * Probes
+	 */
+	{
+		node [
+			width = "10.0",
+			fontsize = 28,
+			fontcolor = "black",
+			fillcolor = "white",
+		];
+		probes [ label = <<b>64,785+</b> probes *> ];
+	};
+
+	/*
+	 * Providers
+	 */
+	{
+		node [ fillcolor = 1 ];
+		fbt [ label = "94.14%\nfbt" ];
+		syscall [ label = "3.34%\nsyscall" ];
+		dtmalloc [ label = "1.24%\ndtmalloc" ];
+		otherprov [ label = "1.28%\nother" ];
+	};
+
+	/*
+	 * Modules
+	 */
+	{
+		node [ fillcolor = 2 ];
+		fbtkernel [ label = "91.44%\nkernel" ];
+		fbtzfs [ label = "8.16%\nzfs" ];
+		fbtother [ label = "0.4%\nother" ];
+		syscallfreebsd [ label = "50%\nfreebsd" ];
+		syscallfreebsd32 [ label = "50%\nfreebsd" ];
+		otherprovkernel [ label = "43.71%\nkernel" ];
+		otherprovnfs [ label = "20.42%\nnfs2/3/4" ];
+		otherprovvop [ label = "17.68%\nvop" ];
+		otherprovother [ label = "18.19%\nother" ];
+	};
+
+	/*
+	 * Functions
+	 */
+	{
+		node [ fillcolor = 3 ];
+		fbtkernelfunc [ label = "29440\nfunctions" ];
+		fbtzfsfunc [ label = "2738\nfunctions" ];
+		fbtotherfunc [ label = "136\nfunctions" ];
+		syscallfunc [ label = "541\nfunctions" ];
+		dtmallocfunc [ label = "403\nfunctions" ];
+		otherprovfunc [ label = "300\nfunctions" ];
+	};
+
+	/*
+	 * Names
+	 */
+	{
+		node [ fillcolor = 4 ];
+		fbtentry [ label = "53.42%\nentry" ];
+		fbtreturn [ label = "46.58%\nreturn" ];
+		syscallentry [ label = "50%\nentry" ];
+		syscallreturn [ label = "50%\nreturn" ];
+		dtmallocmalloc [ label = "50%\nmalloc" ];
+		dtmallocfree [ label = "50%\nfree" ];
+		otherprovdone [ label = "11.71%\ndone" ];
+		otherprovstart [ label = "10.34%\nstart" ];
+		otherprovname [ label = "186 other\nnames" ];
+	};
+
+	/*
+	 * Ranks
+	 */
+	{
+		rank = same;
+		fbtkernelfunc;
+		fbtzfsfunc;
+		fbtotherfunc;
+		syscallfunc;
+		dtmallocfunc;
+		otherprovfunc;
+	};
+
+	/*
+	 * Relationships
+	 */
+	probes -> fbt;
+	probes -> syscall;
+	probes -> dtmalloc;
+	probes -> otherprov;
+	fbt -> fbtkernel -> fbtkernelfunc;
+	fbt -> fbtzfs -> fbtzfsfunc;
+	fbt -> fbtother -> fbtotherfunc;
+	fbtkernelfunc -> fbtentry;
+	fbtkernelfunc -> fbtreturn;
+	fbtzfsfunc -> fbtentry;
+	fbtzfsfunc -> fbtreturn;
+	fbtotherfunc -> fbtentry;
+	fbtotherfunc -> fbtreturn;
+	syscall -> syscallfreebsd -> syscallfunc;
+	syscall -> syscallfreebsd32 -> syscallfunc;
+	syscallfunc -> syscallentry;
+	syscallfunc -> syscallreturn;
+	dtmalloc -> dtmallocfunc;
+	dtmallocfunc -> dtmallocmalloc;
+	dtmallocfunc -> dtmallocfree;
+	otherprov -> otherprovkernel -> otherprovfunc;
+	otherprov -> otherprovnfs -> otherprovfunc;
+	otherprov -> otherprovvop -> otherprovfunc;
+	otherprov -> otherprovother -> otherprovfunc;
+	otherprovfunc -> otherprovstart;
+	otherprovfunc -> otherprovdone;
+	otherprovfunc -> otherprovname;
+}

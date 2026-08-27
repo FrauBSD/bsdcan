@@ -1,0 +1,226 @@
+/* vim: set filetype=dot :: Vi/ViM */
+strict digraph {
+
+	/*
+	 * Graph setup and orientation
+	 */
+	margin = 0; // minimize white border
+
+	/*
+	 * Default node attributes
+	 */
+	node [
+		fontname = "Arial",
+		fontsize = 16,
+		fontcolor = "white",
+		shape = box,
+		style = "filled",
+		colorscheme = "set15",
+		penwidth = 0,
+	];
+
+	/*
+	 * Aliases
+	 */
+	{
+		node [ fillcolor = 5 ];
+		"proc-signal";
+		"proc-status";
+		recv;
+		rw;
+		"sched-cpu";
+		"sched-exec";
+		"sched-pri";
+		"sched-queue";
+		send;
+		sendrecv;
+		"tcp-accept";
+		"tcp-connect";
+		"tcp-established";
+		"tcp-init";
+		"tcp-io";
+		"tcp-refused";
+		"tcp-status";
+	};
+
+	/*
+	 * Providers
+	 */
+	{
+		node [ fillcolor = 1 ];
+		io;
+		ip;
+		proc;
+		sched;
+		tcp;
+		udp;
+	};
+
+	/*
+	 * Functions
+	 */
+	{
+		node [ fillcolor = 3 ];
+		chmod;
+		fchmodat;
+		kill;
+		lchmod;
+		nanosleep;
+		open;
+		openat;
+		read;
+		recvfrom;
+		recvmsg;
+		sendmsg;
+		sendto;
+		vop_create;
+		vop_lookup;
+		vop_mkdir;
+		vop_mknod;
+		vop_readdir;
+		vop_remove;
+		vop_rename;
+		vop_rmdir;
+		vop_symlink;
+		write;
+	};
+
+	/*
+	 * Names
+	 */
+	{
+		node [ fillcolor = 4 ];
+		errno;
+		"io-done" [ label = "done" ];
+		"io-start" [ label = "start" ];
+		"ip-receive" [ label = "receive" ];
+		"ip-send" [ label = "send" ];
+		"proc-create" [ label = "create" ];
+		"proc-exec" [ label = "exec" ];
+		"proc-exec-failure" [ label = "exec-failure" ];
+		"proc-exec-success" [ label = "exec-success" ];
+		"proc-exit" [ label = "exit" ];
+		"proc-signal-clear" [ label = "clear" ];
+		"proc-signal-discard" [ label = "discard" ];
+		"proc-signal-send" [ label = "send" ];
+		"sched-change-pri" [ label = "change-pri" ];
+		"sched-dequeue" [ label = "dequeue" ];
+		"sched-enqueue" [ label = "enqueue" ];
+		"sched-lend-pri" [ label = "lend-pri" ];
+		"sched-load-change" [ label = "load-change" ];
+		"sched-off-cpu" [ label = "off-cpu" ];
+		"sched-on-cpu" [ label = "on-cpu" ];
+		"sched-preempt" [ label = "preempt" ];
+		"sched-remain-cpu" [ label = "remain-cpu" ];
+		"sched-sleep" [ label = "sleep" ];
+		"sched-surrender" [ label = "surrender" ];
+		"sched-tick" [ label = "tick" ];
+		"sched-wakeup" [ label = "wakeup" ];
+		"tcp-accept-established" [ label = "accept-established" ];
+		"tcp-accept-refused" [ label = "accept-refused" ];
+		"tcp-connect-established" [ label = "connect-established" ];
+		"tcp-connect-refused" [ label = "connect-refused" ];
+		"tcp-connect-request" [ label = "connect-request" ];
+		"tcp-receive" [ label = "receive" ];
+		"tcp-send" [ label = "send" ];
+		"tcp-state-change" [ label = "state-change" ];
+		"udp-receive" [ label = "receive" ];
+		"udp-send" [ label = "send" ];
+	};
+
+	/*
+	 * Relationships
+	 */
+	chmod -> fchmodat;
+	chmod -> lchmod;
+	io -> "io-done";
+	io -> "io-start";
+	ip -> "ip-receive";
+	ip -> "ip-send";
+	open -> openat;
+	proc -> "proc-signal";
+	proc -> "proc-status";
+	"proc-signal" -> "proc-signal-clear";
+	"proc-signal" -> "proc-signal-discard";
+	"proc-signal" -> "proc-signal-send";
+	"proc-status" -> "proc-create";
+	"proc-status" -> "proc-exec";
+	"proc-status" -> "proc-exec-failure";
+	"proc-status" -> "proc-exec-success";
+	"proc-status" -> "proc-exit";
+	rw -> read;
+	rw -> write;
+	sched -> "sched-cpu";
+	sched -> "sched-exec";
+	sched -> "sched-preempt";
+	sched -> "sched-pri";
+	sched -> "sched-queue";
+	sched -> "sched-surrender";
+	sched -> "sched-tick";
+	"sched-cpu" -> "sched-off-cpu";
+	"sched-cpu" -> "sched-on-cpu";
+	"sched-cpu" -> "sched-remain-cpu";
+	"sched-exec" -> "sched-sleep";
+	"sched-exec" -> "sched-wakeup";
+	"sched-pri" -> "sched-change-pri";
+	"sched-pri" -> "sched-lend-pri";
+	"sched-queue" -> "sched-dequeue";
+	"sched-queue" -> "sched-enqueue";
+	"sched-queue" -> "sched-load-change";
+	sendrecv -> recv;
+	sendrecv -> send;
+	recv -> recvfrom;
+	recv -> recvmsg;
+	send -> sendmsg;
+	send -> sendto;
+	tcp -> "tcp-io";
+	tcp -> "tcp-status";
+	{
+		edge [
+			style = dotted,
+			color = grey50,
+			arrowhead = none,
+		];
+		tcp -> "tcp-accept";
+		tcp -> "tcp-connect";
+		tcp -> "tcp-established";
+		tcp -> "tcp-init";
+		tcp -> "tcp-refused";
+		"tcp-accept" -> "tcp-accept-established";
+		"tcp-accept" -> "tcp-accept-refused";
+		"tcp-connect" -> "tcp-connect-established";
+		"tcp-connect" -> "tcp-connect-refused";
+		"tcp-connect" -> "tcp-connect-request";
+		"tcp-established" -> "tcp-accept-established";
+		"tcp-established" -> "tcp-connect-established";
+		"tcp-init" -> "tcp-accept-established";
+		"tcp-init" -> "tcp-accept-refused";
+		"tcp-init" -> "tcp-connect-established";
+		"tcp-init" -> "tcp-connect-refused";
+		"tcp-init" -> "tcp-connect-request";
+		"tcp-refused" -> "tcp-accept-refused";
+		"tcp-refused" -> "tcp-connect-refused";
+	};
+	"tcp-io" -> "tcp-receive";
+	"tcp-io" -> "tcp-send";
+	"tcp-status" -> "tcp-accept-established";
+	"tcp-status" -> "tcp-accept-refused";
+	"tcp-status" -> "tcp-connect-established";
+	"tcp-status" -> "tcp-connect-refused";
+	"tcp-status" -> "tcp-connect-request";
+	"tcp-status" -> "tcp-state-change";
+	udp -> "udp-receive";
+	udp -> "udp-send";
+	{
+		edge [
+			style = dotted,
+			color = grey50,
+			arrowhead = none,
+		];
+		vop_create -> vop_lookup;
+		vop_create -> vop_mkdir;
+		vop_create -> vop_mknod;
+		vop_create -> vop_remove;
+		vop_create -> vop_rmdir;
+	};
+}

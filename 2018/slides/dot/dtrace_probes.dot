@@ -1,0 +1,37 @@
+strict digraph {
+
+	/*
+	 * Graph setup and orientation
+	 */
+	margin = 0;   // minimize white border
+	rankdir = LR; // create ranks left-to-right
+
+	/*
+	 * Default node attributes
+	 */
+	node [
+		fontname = "Arial",
+		fontsize = 16,
+		fontcolor = "white",
+		shape = box,
+		width = "1.33",
+		height = "1.0",
+		fixedsize = true,
+		style = "filled",
+		colorscheme = "set14",
+		penwidth = 0,
+	];
+
+	/*
+	 * Nodes
+	 */
+	provs [ label = "26+\nunique\nproviders", fillcolor = 1 ];
+	mods  [ label = "23+\nunique\nmodules", fillcolor = 2 ];
+	funcs [ label = "33,453+\nunique\nfunctions", fillcolor = 3 ];
+	names [ label = "211+\nunique\nnames", fillcolor = 4 ];
+
+	/*
+	 * Relationships
+	 */
+	provs -> mods -> funcs -> names;
+}

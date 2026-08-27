@@ -1,0 +1,75 @@
+/* vim: set filetype=dot :: Vi/ViM */
+strict digraph {
+
+	/*
+	 * Graph setup and orientation
+	 */
+	margin = 0; // minimize white border
+
+	/*
+	 * Default node attributes
+	 */
+	node [
+		fontname = "Arial",
+		fontsize = 16,
+		fontcolor = "white",
+		shape = box,
+		style = "filled",
+		colorscheme = "set15",
+		penwidth = 0,
+	];
+
+	/*
+	 * Aliases
+	 */
+	{
+		node [ fillcolor = 5 ];
+		recv;
+		rw;
+		send;
+		sendrecv;
+	};
+
+	/*
+	 * Functions
+	 */
+	{
+		node [ fillcolor = 3 ];
+		chmod;
+		fchmodat;
+		kill;
+		lchmod;
+		nanosleep;
+		open;
+		openat;
+		read;
+		recvfrom;
+		recvmsg;
+		sendmsg;
+		sendto;
+		write;
+	};
+
+	/*
+	 * Names
+	 */
+	{
+		node [ fillcolor = 4 ];
+		errno;
+	};
+
+	/*
+	 * Relationships
+	 */
+	chmod -> fchmodat;
+	chmod -> lchmod;
+	open -> openat;
+	rw -> read;
+	rw -> write;
+	sendrecv -> recv;
+	sendrecv -> send;
+	recv -> recvfrom;
+	recv -> recvmsg;
+	send -> sendmsg;
+	send -> sendto;
+}

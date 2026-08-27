@@ -1,0 +1,108 @@
+/* vim: set filetype=dot :: Vi/ViM */
+strict digraph {
+
+	/*
+	 * Graph setup and orientation
+	 */
+	margin = 0; // minimize white border
+
+	/*
+	 * Default node attributes
+	 */
+	node [
+		fontname = "Arial",
+		fontsize = 16,
+		fontcolor = "white",
+		shape = box,
+		style = "filled",
+		colorscheme = "set15",
+		penwidth = 0,
+	];
+
+	/*
+	 * Aliases
+	 */
+	{
+		node [ fillcolor = 5 ];
+		"tcp-accept";
+		"tcp-connect";
+		"tcp-established";
+		"tcp-init";
+		"tcp-io";
+		"tcp-refused";
+		"tcp-status";
+	};
+
+	/*
+	 * Providers
+	 */
+	{
+		node [ fillcolor = 1 ];
+		ip;
+		tcp;
+		udp;
+	};
+
+	/*
+	 * Names
+	 */
+	{
+		node [ fillcolor = 4 ];
+		"ip-receive" [ label = "receive" ];
+		"ip-send" [ label = "send" ];
+		"tcp-accept-established" [ label = "accept-established" ];
+		"tcp-accept-refused" [ label = "accept-refused" ];
+		"tcp-connect-established" [ label = "connect-established" ];
+		"tcp-connect-refused" [ label = "connect-refused" ];
+		"tcp-connect-request" [ label = "connect-request" ];
+		"tcp-receive" [ label = "receive" ];
+		"tcp-send" [ label = "send" ];
+		"tcp-state-change" [ label = "state-change" ];
+		"udp-receive" [ label = "receive" ];
+		"udp-send" [ label = "send" ];
+	};
+
+	/*
+	 * Relationships
+	 */
+	ip -> "ip-receive";
+	ip -> "ip-send";
+	tcp -> "tcp-io";
+	tcp -> "tcp-status";
+	{
+		edge [
+			style = dotted,
+			color = grey50,
+			arrowhead = none,
+		];
+		tcp -> "tcp-accept";
+		tcp -> "tcp-connect";
+		tcp -> "tcp-established";
+		tcp -> "tcp-init";
+		tcp -> "tcp-refused";
+		"tcp-accept" -> "tcp-accept-established";
+		"tcp-accept" -> "tcp-accept-refused";
+		"tcp-connect" -> "tcp-connect-established";
+		"tcp-connect" -> "tcp-connect-refused";
+		"tcp-connect" -> "tcp-connect-request";
+		"tcp-established" -> "tcp-accept-established";
+		"tcp-established" -> "tcp-connect-established";
+		"tcp-init" -> "tcp-accept-established";
+		"tcp-init" -> "tcp-accept-refused";
+		"tcp-init" -> "tcp-connect-established";
+		"tcp-init" -> "tcp-connect-refused";
+		"tcp-init" -> "tcp-connect-request";
+		"tcp-refused" -> "tcp-accept-refused";
+		"tcp-refused" -> "tcp-connect-refused";
+	};
+	"tcp-io" -> "tcp-receive";
+	"tcp-io" -> "tcp-send";
+	"tcp-status" -> "tcp-accept-established";
+	"tcp-status" -> "tcp-accept-refused";
+	"tcp-status" -> "tcp-connect-established";
+	"tcp-status" -> "tcp-connect-refused";
+	"tcp-status" -> "tcp-connect-request";
+	"tcp-status" -> "tcp-state-change";
+	udp -> "udp-receive";
+	udp -> "udp-send";
+}

@@ -1,0 +1,1440 @@
+%
+% Slides for BSDCan 2018 Conference.
+%
+% NB: Requires LaTeX and LaTeX Beamer [1] to compile.
+%
+% [1] http://latex-beamer.sourceforge.net
+%
+
+\documentclass{beamer}
+
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{alltt}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\definecolor{red}{rgb}{0.8,0.0,0.0}
+\definecolor{darkred}{rgb}{0.55,0.0,0.0}
+\definecolor{prov}{rgb}{0.89,0.1,0.11}
+\definecolor{mod}{rgb}{0.22,0.49,0.72}
+\definecolor{func}{rgb}{0.31,0.69,0.29}
+\definecolor{name}{rgb}{0.6,0.31,0.64}
+
+%
+% ANSI terminal colors
+%
+\definecolor{tblack}{rgb}{0.00,0.00,0.00}
+\definecolor{bblack}{rgb}{0.54,0.54,0.54}
+\definecolor{tred}{rgb}{0.80,0.26,0.18}
+\definecolor{bred}{rgb}{0.98,0.28,0.19}
+\definecolor{tgreen}{rgb}{0.26,0.75,0.22}
+\definecolor{bgreen}{rgb}{0.25,0.91,0.22}
+\definecolor{tyellow}{rgb}{0.70,0.69,0.22}
+\definecolor{byellow}{rgb}{0.93,0.92,0.22}
+\definecolor{tblue}{rgb}{0.38,0.27,0.92}
+\definecolor{bblue}{rgb}{0.43,0.29,0.98}
+\definecolor{tmagenta}{rgb}{0.86,0.30,0.85}
+\definecolor{bmagenta}{rgb}{0.99,0.31,0.98}
+\definecolor{tcyan}{rgb}{0.27,0.75,0.80}
+\definecolor{bcyan}{rgb}{0.24,0.94,0.94}
+\definecolor{twhite}{rgb}{0.81,0.81,0.81}
+\definecolor{bwhite}{rgb}{0.92,0.92,0.92}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=red,
+    filecolor=red,      
+    urlcolor=red,
+}
+
+\mode<presentation>
+{
+  \definecolor{beamer@gker}{rgb}{0.8,0.0,0.0}
+  \setbeamercolor*{structure}{fg=beamer@gker}
+  \logo{\includegraphics[scale=0.5]{graphics/logo.pdf}}
+}
+
+\title{All Along the dwatch Tower}
+\subtitle{\color{darkred} DTrace tool for the masses}
+\author{Devin Teske \\ \href{mailto:dteske@FreeBSD.org}{dteske@FreeBSD.org}}
+\institute{\includegraphics[scale=0.66]{graphics/logo.pdf}}
+\date{BSDCan Conference \\
+University of Ottawa, Ontario \\
+June 8-9, 2018}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TITLE
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BLAME
+
+\begin{frame}\frametitle{Who Am I?}
+  \begin{center}
+    \begin{tabular}{cc}
+    {\Large {\bf src} committer} & {\Large {\bf ports} committer} \\
+    \\
+    \includegraphics[scale=0.28]{dot/committers-src-dteske.pdf} & \includegraphics[scale=0.28]{dot/committers-ports-dteske.pdf} \\
+    \end{tabular}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Some FreeBSD Contributions (1 of 6)}
+  \begin{center}
+    {\Large\bf Boot Menu} \\
+    \bigskip
+    FreeBSD 6 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FreeBSD 11 \\
+    \bigskip
+    \includegraphics[scale=0.25]{graphics/freebsd-boot-dteske.pdf}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Some FreeBSD Contributions (2 of 6)}
+  \begin{center}
+    {\Large\bf Easter Egg} \\
+    \bigskip
+    Die Hard (1988) \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FreeBSD 9.2-RC1 (2013) \\
+    \bigskip
+    \includegraphics[scale=0.3]{graphics/freebsd9-diehard.pdf}
+    \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+  \end{center}
+\end{frame}
+
+\begin{frame}\frametitle{Some FreeBSD Contributions (3 of 6)}
+  \begin{center}
+    {\Large\bf bsdinstall \underline{distextract}} \\
+    \bigskip
+    \includegraphics[scale=0.33]{graphics/bsdinstall-distextract.pdf}
+    \bigskip
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Some FreeBSD Contributions (4 of 6)}
+  \begin{center}
+    {\Large\bf bsdinstall \underline{zfsboot}} \\
+    (with \href{http://twitter.com/allanjude}{allanjude@}) \\
+    \bigskip
+    \includegraphics[scale=0.33]{graphics/bsdinstall-zfsboot.pdf}
+    \bigskip
+  \end{center}
+  \bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Some FreeBSD Contributions (5 of 6)}
+  \begin{center}
+    {\Large\bf bsdconfig} \\
+    \bigskip
+    \includegraphics[scale=0.33]{graphics/bsdconfig.pdf}
+    \bigskip
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Some FreeBSD Contributions (6 of 6)}
+  \begin{center}
+    {\Large\bf sysrc} \\
+  \end{center}
+  {\tiny
+    \begin{alltt}
+\setlength\parindent{29pt}
+{\color{tmagenta}SYSRC(8)                FreeBSD System Manager's Manual               SYSRC(8)}
+
+{\color{tyellow}NAME}
+     sysrc - safely edit system rc files
+
+{\color{tyellow}SYNOPSIS}
+     sysrc [-cdDeEFhinNqvx] [-s name] [-f file] [-j jail | -R dir]
+           name[[+|-]=value] ...
+     sysrc [-cdDeEFhinNqvx] [-s name] [-f file] [-j jail | -R dir] -a | -A
+     sysrc [-E] [-s name] [-f file] -l
+     sysrc [-eEqv] -L [name ...]
+
+{\color{tyellow}DESCRIPTION}
+     The sysrc utility retrieves {\color{tmagenta}rc.conf(5)} variables from the collection of
+     system rc files and allows processes with appropriate privilege to change
+     values in a safe and effective manner.
+
+     The following options are available:
+
+     {\color{tred}-a}       Dump a list of all non-default configuration variables.
+
+     {\color{tred}-A}       Dump a list of all configuration variables (incl. defaults).
+      {\color{tred}\vdots}                                    \vdots
+    \end{alltt}
+  }
+  \bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TALK: INTRO
+
+\begin{frame}\frametitle{Today's Talk}
+  {\LARGE {\bf 3 topics} to cover today} \\
+  {\Large
+    \bigskip
+    \begin{itemize}
+      \item {\bf DTrace} \\
+      \item My new tool - {\bf dwatch} \\
+      \item {\bf New ports} (Live Demo) \\
+      \begin{itemize}
+        \item {\Large sysutils/dwatch-pwsnoop}
+        \item {\Large sysutils/dwatch-gource}
+      \end{itemize}
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TALK: TRANSITION
+
+\begin{frame}\frametitle{}
+  \begin{center}
+    {\Huge\bf DTrace}
+  \end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DTRACE: INTRO
+
+\begin{frame}\frametitle{On the Topic of DTrace}
+  {\Large\bf Overview}
+  \begin{itemize}
+    \item The Mascot
+    \item What Can DTrace Do?
+    \item Brief History and About
+  \end{itemize}
+  \bigskip
+  {\Large {\bf Using DTrace} (in-depth) - {\bf 3 Parts}}
+  \begin{itemize}
+    \item Part 1 - {\bf Probes}
+    \item Part 2 - {\bf Actions}
+    \item Part 3 - {\bf Predicates}
+  \end{itemize}
+  \bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{DTrace Mascot}
+  \begin{center}
+    {\large DTrace {\bf ponycorn} (both {\bf pony} $and$ {\bf unicorn}!)} \\
+    \includegraphics[scale=0.1]{graphics/dtracepony.pdf}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{What Can DTrace Do? (1 of 4)}
+  \begin{center}
+    {\large Provide data for interactive {\bf flame graphs} (pictured)} \\
+    \bigskip
+    \includegraphics[scale=0.4]{graphics/flamegraph.pdf}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{What Can DTrace Do? (2 of 4)}
+  \begin{center}
+    {\large Feed data visualizers such as {\bf gource} (pictured)} \\
+    \bigskip
+    \includegraphics[scale=0.25]{graphics/gwatch_syscall.pdf}
+  \end{center}
+  \bigskip
+\end{frame}
+
+\begin{frame}\frametitle{What Can DTrace Do? (3 of 4)}
+  \begin{center}
+    {\large Trap arguments from {\color{prov} syscalls}, {\color{func} functions}, and so much more} \\
+    \bigskip
+    \includegraphics[scale=0.33]{graphics/mouse_trap.pdf}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{What Can DTrace Do? (4 of 4)}
+  \begin{center}
+    {\large {\bf Snoop} on all the things (pictured)} \\
+    \bigskip
+    \includegraphics[scale=0.4]{graphics/jvjasD7v_400x400.pdf}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Brief [15-year] History of DTrace Support}
+  \begin{itemize}
+    \item Nov 2003 -- Solaris 10 {\bf [DTrace is born]}
+    \item Oct 2007 -- Ported to Mac OS X 10.5
+    \item Apr 2008 -- dtrace4linux is born
+    \item Jan 2009 -- Ported to {\bf \color{darkred} FreeBSD 7.1}
+    \item Feb 2010 -- Ported to NetBSD
+    \item Dec 2012 -- Ported to Oracle Linux 6
+    \item Feb 2018 -- Oracle relicenses DTrace under GPL
+  \end{itemize}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{About DTrace}
+  \begin{itemize}
+    \item Own ``D'' language
+    \item Micro virtual machine
+    \item Conservative probe point selection
+  \end{itemize}
+  \bigskip
+  \begin{flushright}
+    -- Adam Leventhal [\href{http://twitter.com/ahl}{@ahl}], DTrace Co-Creator
+    [\href{http://dtrace.org/blogs/ahl/page/11/}{http://dtrace.org/blogs/ahl/page/11/}]
+  \end{flushright}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DTRACE: PROBES
+
+\begin{frame}\frametitle{Using DTrace}
+  \begin{center}
+    {\LARGE {\bf Part 1:} Probes}
+  \end{center}
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: Basic DTrace Syntax}
+  \begin{center}
+    {\LARGE (as root) {\bf dtrace -n \underline{$<$probe$>$}}} \\
+    \bigskip
+    {\large\em trace a probe} \\
+    \bigskip\bigskip
+    {\Large (as root) {\bf dtrace -n \underline{$<$probe$>$,$<$probe$>$,...}}} \\
+    \bigskip
+    {\large\em trace multiple probes}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: What Is a DTrace Probe?}
+  \begin{center}
+    {\Large \underline{$<$probe$>$} is a {\bf colon-separated string}} \\
+    \bigskip
+    representing {\em kernel} or {\em userland} points to trace \\
+    \bigskip\bigskip
+    $<$$probe$$>$ = 4-Tuple = {\large {
+        \color{prov} provider
+      }:{
+        \color{mod} module
+      }:{
+        \color{func} function
+      }:{
+        \color{name} name
+      }
+    } \\
+    \bigskip
+    Example: {\color{prov} vfs}:{\color{mod} vop}:{\color{func} vop\_create}:{\color{name} entry} \\
+    \bigskip
+    \includegraphics[scale=0.5]{dot/dtrace_probes.pdf}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 1: DTrace Output (1 of 5)}
+  {\Large (as root) {\bf dtrace -n {\color{prov} vfs}:{\color{mod} vop}:{\color{func} vop\_create}:{\color{name} entry}}} \\
+  {\small
+    \begin{alltt}
+dtrace: description '{\color{prov}vfs}:{\color{mod}vop}:{\color{func}vop_create}:{\color{name}entry}' matched 1 probe
+CPU     ID                 {\color{func}FUNCTION}:{\color{name}NAME}
+  3  61206              {\color{func}vop_create}:{\color{name}entry}
+  4  61206              {\color{func}vop_create}:{\color{name}entry}
+  0  61206              {\color{func}vop_create}:{\color{name}entry}
+  3  61206              {\color{func}vop_create}:{\color{name}entry}
+  2  61206              {\color{func}vop_create}:{\color{name}entry}
+  0  61206              {\color{func}vop_create}:{\color{name}entry}
+  2  61206              {\color{func}vop_create}:{\color{name}entry}
+  2  61206              {\color{func}vop_create}:{\color{name}entry}
+  7  61206              {\color{func}vop_create}:{\color{name}entry}
+  \vdots    \vdots                      {\color{func}\vdots}      {\color{name}\vdots}
+    \end{alltt}
+  }
+  \bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: DTrace Probes}
+  \begin{center}
+    {\Large\bf How many probes are there?} \\
+    \bigskip
+    $<$probe$>$ = {\bf {\color{prov} :}{\color{mod} :}{\color{func} :}{\color{name} :}} or simply {\bf :} \\
+    \bigskip
+    \includegraphics[scale=0.272]{dot/dtrace_probes_by_prov.pdf}
+  \end{center}
+  {\footnotesize * On FreeBSD 11.0-RELEASE-p1 with dtraceall.ko loaded} \\
+  \bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: DTrace Probe Wildcards}
+  {\Large {\color{prov} provider}, {\color{mod} module}, {\color{func} function}, or {\color{name} name} can use:} \\
+  \bigskip
+  \begin{itemize}
+    \item $Blank$ for wildcard \\
+      {\color{prov} vfs}{\bf ::}{\color{func} vop\_create}:{\color{name} entry} \\
+    \bigskip
+    \item {\bf *} for wildcard (requires quoting) \\
+      {\color{prov} vfs}:{\color{mod} {\bf *}}:{\color{func} vop\_create}:{\color{name} entry} \\
+    \bigskip
+    \item {\bf *} for patterns (no regex):
+    \begin{itemize}
+      \item {\color{prov} vfs}:{\color{mod} vop}:{\color{func} {\bf *}attr}:{\color{name} entry}
+      \item {\color{prov} syscall}::{\color{func} read{\bf *}}:{\color{name} entry}
+      \item {\color{prov} vfs}::{\color{func} {\bf *}write{\bf *}}:{\color{name} entry}
+    \end{itemize}
+  \end{itemize}
+  \bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 1: DTrace Output (2 of 5)}
+  {\Large (as root) {\bf dtrace -n "{\color{prov} vfs}::{\color{func} *write*}:{\color{name} entry}"}} \\
+  {\small
+    \begin{alltt}
+dtrace: description '{\color{prov}vfs}::{\color{func}*write*}:{\color{name}entry}' matched 4 probes
+CPU     ID                 {\color{func}FUNCTION}:{\color{name}NAME}
+  2  61268       {\color{func}vop_getwritemount}:{\color{name}entry}
+  2  61228               {\color{func}vop_write}:{\color{name}entry}
+  4  61328      {\color{func}vop_get_writecount}:{\color{name}entry}
+  4  61328      {\color{func}vop_get_writecount}:{\color{name}entry}
+  4  61268       {\color{func}vop_getwritemount}:{\color{name}entry}
+  4  61268       {\color{func}vop_getwritemount}:{\color{name}entry}
+  4  61268       {\color{func}vop_getwritemount}:{\color{name}entry}
+  4  61268       {\color{func}vop_getwritemount}:{\color{name}entry}
+  4  61268       {\color{func}vop_getwritemount}:{\color{name}entry}
+  \vdots    \vdots                  {\color{func}\vdots}          {\color{name}\vdots}
+    \end{alltt}
+  }
+  \bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: DTrace Multi-Probe Examples}
+  {\large Selecting multiple {\bf different} probes ...} \\
+  \bigskip
+  {\bf read(2)} and {\bf write(2)} syscalls
+  \begin{itemize}
+    \item {\color{prov} syscall}::{\color{func} read}:{\color{name} entry}{\Large ,}{\color{prov} syscall}::{\color{func} write}:{\color{name} entry} \\
+      2 probes
+  \end{itemize}
+  \bigskip
+  {\bf vfs} and {\bf syscall} providers
+  \begin{itemize}
+    \item {\color{prov} vfs}:::{\Large ,}{\color{prov} syscall}::: \\
+      2324 probes
+  \end{itemize}
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 1: DTrace Output (3 of 5)}
+  {\LARGE (as root) {\bf dtrace -n {\color{prov} vfs}:::,{\color{prov} syscall}:::}} \\
+  {\small
+    \begin{alltt}
+dtrace: description '{\color{prov}vfs}:::,{\color{prov}syscall}:::' matched 2324 probes
+CPU     ID                 {\color{func}FUNCTION}:{\color{name}NAME}
+  6  62594                  {\color{func}ioctl}:{\color{name}return}
+  4  60917                  {\color{func}lookup}:{\color{name}entry}
+  4  61260               {\color{func}vop_lock1}:{\color{name}entry}
+  4  61261              {\color{func}vop_lock1}:{\color{name}return}
+  6  62593                   {\color{func}ioctl}:{\color{name}entry}
+  4  61200            {\color{func}vop_islocked}:{\color{name}entry}
+  4  61201           {\color{func}vop_islocked}:{\color{name}return}
+  4  61202              {\color{func}vop_lookup}:{\color{name}entry}
+  4  61216              {\color{func}vop_access}:{\color{name}entry}
+  \vdots    \vdots                     {\color{func}\vdots}       {\color{name}\vdots}
+    \end{alltt}
+  }
+  \bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: Intermediate DTrace Syntax}
+  \begin{center}
+    {\Large (as root) {\bf dtrace \underline{$<$probe\_type$>$ $<$probe$>$[,...]}}} \\
+    \bigskip
+    {\large\em more than just -n and 4-tuples} \\
+    \bigskip
+    {\large\em tracing an entire {\color{prov} provider}, {\color{mod} module}, {\color{func} function}, or {\color{name} name}}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: How is DTrace Probe Type Used?}
+  {\Large\em $<$probe\_type$>$} \\
+  \begin{itemize}
+    \item {\Large Includes -n}
+    \item {\large Must always precede $<$probe$>$}
+    \item {\large Allows shorter $<$probe$>$'s (3-tuple and less)}
+    \item {\large Applies to all probes}
+  \end{itemize}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: DTrace Probe Type}
+  {\color{name}-n} {\color{name} name} or 4-tuple ({\color{prov} prov}:{\color{mod} mod}:{\color{func} func}:{\color{name} name})
+  \begin{itemize}
+    \item {\color{name} -n tick} $\Leftrightarrow$ -n :::{\color{name} tick}
+    \item {\color{name} -n} proc:::{\color{name} create},{\color{name} on-cpu} $\Leftrightarrow$ -n proc:::{\color{name} create},:::{\color{name} oncpu}
+  \end{itemize}
+  {\color{func}-f} {\color{func} function}
+  \begin{itemize}
+    \item {\color{func} -f log} $\Leftrightarrow$ -n ::{\color{func} log}:
+    \item {\color{func} -f} vfs::{\color{func} zap} $\Leftrightarrow$ -n vfs::{\color{func} zap}:
+  \end{itemize}
+  {\color{mod}-m} {\color{mod} module}
+  \begin{itemize}
+    \item {\color{mod} -m zfs} $\Leftrightarrow$ -n :{\color{mod} zfs}::
+    \item {\color{mod} -m} fbt:{\color{mod} zfs} $\Leftrightarrow$ -n fbt:{\color{mod} zfs}::
+  \end{itemize}
+  {\color{prov}-P} {\color{prov} provider}
+  \begin{itemize}
+    \item {\color{prov} -P syscall} $\Leftrightarrow$ -n {\color{prov} syscall}:::
+  \end{itemize}
+  \bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 1: DTrace Output (4 of 5)}
+  {\LARGE (as root) {\bf dtrace {\color{mod} -m zfs}}} \\
+  {\small
+    \begin{alltt}
+CPU     ID                    {\color{func}FUNCTION}:{\color{name}NAME}
+  1  55893       {\color{func}arc_available_memory}:{\color{name}entry}
+  1  61357        {\color{func}none}:{\color{name}arc-available_memory}
+  1  55894      {\color{func}arc_available_memory}:{\color{name}return}
+  1  55889                 {\color{func}arc_adjust}:{\color{name}entry}
+  1  55891            {\color{func}arc_adjust_type}:{\color{name}entry}
+  1  58175 {\color{func}multilist_get_random_index}:{\color{name}entry}
+  1  58352             {\color{func}spa_get_random}:{\color{name}entry}
+  1  58353            {\color{func}spa_get_random}:{\color{name}return}
+  1  58175 {\color{func}multilist_get_random_index}:{\color{name}entry}
+  \vdots    \vdots                {\color{func}\vdots}               {\color{name}\vdots}
+    \end{alltt}
+  }
+  \bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: Listing DTrace Probes}
+  {\large
+    {\Large List all probes ...} \\
+    \bigskip
+    \begin{itemize}
+      \item (as root) {\bf dtrace -ln :}
+    \end{itemize}
+    \bigskip
+    {\Large List matching probes ...} \\
+    \bigskip
+    \begin{itemize}
+      \item (as root) {\bf dtrace -l{\color{prov} P syscall}}
+      \item (as root) {\bf dtrace -ln "::{\color{func} exec*}:{\color{name} entry}"}
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 1: DTrace Output (5 of 5)}
+  {\LARGE (as root) {\bf dtrace -l{\color{prov} P syscall}}} \\
+  {\small
+    \begin{alltt}
+   ID   {\color{prov}PROVIDER}         {\color{mod}MODULE}            {\color{func}FUNCTION} {\color{name}NAME}
+61403    {\color{prov}syscall}      {\color{mod}freebsd32}             {\color{func}syscall} {\color{name}entry}
+61404    {\color{prov}syscall}      {\color{mod}freebsd32}             {\color{func}syscall} {\color{name}return}
+61405    {\color{prov}syscall}      {\color{mod}freebsd32}                {\color{func}exit} {\color{name}entry}
+61406    {\color{prov}syscall}      {\color{mod}freebsd32}                {\color{func}exit} {\color{name}return}
+61407    {\color{prov}syscall}      {\color{mod}freebsd32}                {\color{func}fork} {\color{name}entry}
+  \vdots         {\color{prov}\vdots}             {\color{mod}\vdots}                     {\color{func}\vdots}     {\color{name}\vdots}
+63562    {\color{prov}syscall}        {\color{mod}freebsd}           {\color{func}utimensat} {\color{name}return}
+63563    {\color{prov}syscall}        {\color{mod}freebsd}    {\color{func}numa_getaffinity} {\color{name}entry}
+63564    {\color{prov}syscall}        {\color{mod}freebsd}    {\color{func}numa_getaffinity} {\color{name}return}
+63565    {\color{prov}syscall}        {\color{mod}freebsd}    {\color{func}numa_setaffinity} {\color{name}entry}
+63566    {\color{prov}syscall}        {\color{mod}freebsd}    {\color{func}numa_setaffinity} {\color{name}return}
+    \end{alltt}
+  }
+  \bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 1: DTrace Probe ID}
+  {\Large \underline{Probe ID} can be used to list probe} \\
+  \bigskip
+  {\large (as root) {\bf dtrace -li \underline{61200}}} \\
+  {\small
+    \begin{alltt}
+   ID   {\color{prov}PROVIDER}   {\color{mod}MODULE}       {\color{func}FUNCTION} {\color{name}NAME}
+\underline{61200}        {\color{prov}vfs}      {\color{mod}vop}   {\color{func}vop_islocked} {\color{name}entry}
+    \end{alltt}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DTRACE: ACTIONS
+
+\begin{frame}\frametitle{Using DTrace}
+  \begin{center}
+    {\LARGE {\bf Part 2:} Actions}
+  \end{center}
+\end{frame}
+
+\begin{frame}\frametitle{Part 2: Advanced DTrace Syntax}
+  \begin{center}
+    {\Large (as root) {\bf dtrace -n "$<$probe$>$ \underline{\em \{ actions \}}"}} \\
+    \bigskip
+    {\large\em more than just cpu, id, {\color{func} probefunc}, and {\color{name} probename}} \\
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 2: DTrace Default Action}
+  {\large
+    {\Large Default action is to print {\bf 4 globals}}
+    \begin{itemize}
+      \item {\tt cpu}
+      \item {\tt id} [of the probe]
+      \item {\tt {\color{func} probefunc}}
+      \item {\tt {\color{name} probename}}
+    \end{itemize}
+    \bigskip
+    {\Large Default action with {\bf -F} is to print {\bf 2 globals}}
+    \begin{itemize}
+      \item {\tt cpu}
+      \item {\tt {\color{func} probefunc}}
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 2: Other DTrace Globals}
+  {\Large\center Globals {\bf NOT} displayed by DTrace} (unless asked for) \\
+  \bigskip
+  {\bf {\color{prov} probeprov}} = DTrace probe provider \\
+  {\bf {\color{mod} probemod}} = DTrace probe module \\
+  {\bf execname} = executable name of current process \\
+  {\bf timestamp} = UNIX epoch in UTC with $\mu$s precision \\
+  {\bf walltimestamp} = Traditional UNIX epoch \\
+  {\bf pid} = current process id \\
+  {\bf uid} = current user id \\
+  {\bf gid} = current group id \\
+  {\bf jid} = jail id of current process (recently added) \\
+  {\bf tid} = current thread id \\
+  {\bf curthread} = {\tt struct thread} from /usr/include/sys/proc.h \\
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 2: DTrace Output (1 of 3)}
+  (as root) {\bf dtrace -n '{\color{prov}syscall}::: \{ printf("\%s", execname) \}'} \\
+  {\small
+    \begin{alltt}
+dtrace: description '{\color{prov}syscall}::: ' matched 2164 probes
+CPU     ID                 {\color{func}FUNCTION}:{\color{name}NAME}
+  4  62594                  {\color{func}ioctl}:{\color{name}return} dtrace
+  7  63194                 {\color{func}kevent}:{\color{name}return} turnserver
+  4  62593                   {\color{func}ioctl}:{\color{name}entry} dtrace
+  4  62594                  {\color{func}ioctl}:{\color{name}return} dtrace
+  4  62593                   {\color{func}ioctl}:{\color{name}entry} dtrace
+  4  62594                  {\color{func}ioctl}:{\color{name}return} dtrace
+  7  63193                  {\color{func}kevent}:{\color{name}entry} turnserver
+  4  63147             {\color{func}sigprocmask}:{\color{name}entry} dtrace
+  4  63148            {\color{func}sigprocmask}:{\color{name}return} dtrace
+  \vdots    \vdots                    {\color{func}\vdots}       {\color{name}\vdots}      \vdots
+    \end{alltt}
+  }
+  \bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 2: DTrace Output (2 of 3)}
+  (as root) {\bf dtrace -Fm '{\color{mod}zfs} \{ \\
+    {\setlength\parindent{24pt}
+      printf("\%s", curthread->td\_name)
+    } \\
+  \}'} \\
+  {\small
+    \begin{alltt}
+dtrace: description '{\color{mod}zfs} ' matched 5024 probes
+CPU {\color{func}FUNCTION}                                 
+  4  -> {\color{func}arc_do_user_evicts}          arc_user_evicts_thr
+  4    -> {\color{func}arc_kstat_update}          arc_user_evicts_thr
+  4    <- {\color{func}arc_kstat_update}          arc_user_evicts_thr
+  6    -> {\color{func}zio_root}                  trim zroot
+  6      -> {\color{func}zio_create}              trim zroot
+  6        -> {\color{func}list_create}           trim zroot
+  6        <- {\color{func}list_create}           trim zroot
+  6        -> {\color{func}list_create}           trim zroot
+  6        <- {\color{func}list_create}           trim zroot
+  \vdots                {\color{func}\vdots}                    \vdots
+    \end{alltt}
+  }
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 2: Probe Arguments (1 of 2)}
+  {\Large Combine {\tt-l} with {\tt-v} to list probe arguments} \\
+  \bigskip
+  (as root) {\bf dtrace \underline{-lv}f {\color{func}vop\_islocked} | awk 'NF==5;/args/,!NF'} \\
+  {\small
+    \begin{alltt}
+   ID   {\color{prov}PROVIDER}    {\color{mod}MODULE}       {\color{func}FUNCTION} {\color{name}NAME}
+61200        {\color{prov}vfs}       {\color{mod}vop}   {\color{func}vop_islocked} {\color{name}entry}
+                args[0]: struct vnode *
+                args[1]: struct vop_islocked_args *
+
+61201        {\color{prov}vfs}       {\color{mod}vop}   {\color{func}vop_islocked} {\color{name}return}
+                args[0]: struct vnode *
+                args[1]: struct vop_islocked_args *
+                args[2]: int
+    \end{alltt}
+  }
+  \bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 2: Probe Arguments (2 of 2)}
+  {\Large Cross-reference with man-pages to build actions} \\
+  \bigskip
+  {\small
+    (as root) {\bf dtrace \underline{-lv}n \underline{{\color{mod}freebsd}:{\color{func}kill}:{\color{name}entry}} | awk 'NF==5;/args/,!NF' } \\
+    \begin{alltt}
+   ID   {\color{prov}PROVIDER}    {\color{mod}MODULE}   {\color{func}FUNCTION} {\color{name}NAME}
+62559    {\color{prov}syscall}   {\color{mod}freebsd}       {\color{func}kill} {\color{name}entry}
+                args[0]: \underline{int}
+                args[1]: \underline{int}
+    \end{alltt}
+    {\bf \underline{man} -P "col -b" \underline{2 {\color{func}kill}} | grep ');'}
+    \begin{alltt}
+     {\color{func}kill}(\underline{pid_t pid}, \underline{int sig});
+    \end{alltt}
+  }
+  \bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 2: DTrace Output (3 of 3)}
+  {\small
+    (as root) {\bf dtrace -n '{\color{func}kill}:{\color{name}entry} \{ \\
+      {\setlength\parindent{24pt}
+        printf("\underline{pid \%i} \underline{sig \%i}", \underline{arg0}, \underline{arg1})
+      } \\
+    \}'}
+    \begin{alltt}
+dtrace: description '::{\color{func}kill}:{\color{name}entry} ' matched 2 probes
+CPU     ID                 {\color{func}FUNCTION}:{\color{name}NAME}
+  4  62559                    {\color{func}kill}:{\color{name}entry} pid 62605 sig 0
+  5  62559                    {\color{func}kill}:{\color{name}entry} pid 62763 sig 2
+  3  62559                    {\color{func}kill}:{\color{name}entry} pid 62604 sig 0
+  6  62559                    {\color{func}kill}:{\color{name}entry} pid -62779 sig 15
+  6  62559                    {\color{func}kill}:{\color{name}entry} pid -62779 sig 19
+  \vdots    \vdots                       {\color{func}\vdots}     {\color{name}\vdots}            \vdots
+    \end{alltt}
+  }
+  \bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DTRACE: PREDICATES
+
+\begin{frame}\frametitle{Using DTrace}
+  \begin{center}
+    {\LARGE {\bf Part 3:} Predicates (aka Test Conditions)}
+  \end{center}
+\end{frame}
+
+\begin{frame}\frametitle{Part 3: Expert DTrace Syntax}
+  \begin{center}
+    {\large (as root) {\bf dtrace -n "$<$probe$>$ \underline{\em/ tests /} \{ actions \}"}} \\
+    \bigskip
+    {\em actions only when you want them} \\
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 3: DTrace Output (1 of 1)}
+  {\small (as root) {\bf dtrace -n '{\color{prov}proc}:::{\color{name}exec} \underline{\em /execname == "bash"/} \{ \\
+    {\setlength\parindent{24pt}
+      printf("fork \%u", pid)
+    } \\
+  \}'}} \\
+  {\small
+    \begin{alltt}
+dtrace: description '{\color{prov}proc}:::{\color{name}exec} ' matched 1 probe
+CPU     ID                 {\color{func}FUNCTION}:{\color{name}NAME}
+  0  60824                     {\color{func}none}:{\color{name}exec} fork 62990
+  0  60824                     {\color{func}none}:{\color{name}exec} fork 62991
+  7  60824                     {\color{func}none}:{\color{name}exec} fork 62992
+  1  60824                     {\color{func}none}:{\color{name}exec} fork 62993
+  1  60824                     {\color{func}none}:{\color{name}exec} fork 63004
+  0  60824                     {\color{func}none}:{\color{name}exec} fork 63009
+  1  60824                     {\color{func}none}:{\color{name}exec} fork 63026
+  1  60824                     {\color{func}none}:{\color{name}exec} fork 63027
+  5  60824                     {\color{func}none}:{\color{name}exec} fork 63038
+  \vdots    \vdots                         {\color{func}\vdots}    {\color{name}\vdots}    \vdots    \vdots
+    \end{alltt}
+  }
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DTRACE: REVIEW
+
+\begin{frame}\frametitle{DTrace Review}
+  {\bf dtrace <probe\_type> "<probe> [/tests/] \{ [actions] \}" ...} \\
+  \begin{itemize}
+    \item Probe, Tests, \& Actions must be combined into single arg
+    \item Default action gives little information
+    \item One-liners frustrating for people that cannot edit "D"
+  \end{itemize}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TALK: TRANSITION
+
+\begin{frame}\frametitle{}
+  \begin{center}
+    {\Huge\bf dwatch}
+  \end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DWATCH: INTRO
+
+\begin{frame}\frametitle{On the Topic of dwatch}
+  {\Large\bf Overview} \\
+  \begin{itemize}
+    \item The Mascot
+    \item About
+    \item What dwatch does different vs well vs poorly
+  \end{itemize}
+  \bigskip
+  {\Large {\bf Using dwatch} (in-depth) - {\bf 3 Parts}} \\
+  \begin{itemize}
+    \item Part 1 - {\bf Probes}
+    \item Part 2 - {\bf Actions and Predicates}
+    \item Part 3 - {\bf Profiles}
+  \end{itemize}
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{dwatch Mascot}
+  \begin{center}
+    {\bf ``Peaches''} the dwatch {\bf ponycorn} \\
+    \includegraphics[scale=0.215]{graphics/peaches-11.pdf}
+  \end{center}
+  \bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{dwatch Availability}
+  {\Large\bf Available in FreeBSD base (/usr/sbin)} \\
+  \bigskip
+  {\large
+    \begin{itemize}
+      \item 11.2-RELEASE (11.2-RC1 or later) \\
+      \bigskip
+      \item 12.0-CURRENT (Jun 1, 2018 or later)
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{About dwatch}
+  {\Large
+    \begin{itemize}
+      \item Powerful DTrace wrapper
+      \item {\bf Intelligent} probe point selection
+      \item New globals
+      \item Default action displays different info
+      \item Profiles
+      \item sudo(8) integration
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{What dwatch Does Different}
+  \begin{center}
+    {\Large\bf Parameterization} \\
+    of {\em Probe, Predicate, and Action} \\
+    \bigskip
+    {\Large\bf DTrace} \\
+    makes you pass all of them as a {\em single argument} \\
+    \bigskip
+    {\Large\bf dwatch} \\
+    {\em separates} them for improved usage
+  \end{center} 
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{What dwatch Does Well}
+  {\Large Filtering and {\em regex}}
+  \begin{itemize}
+    \item process id $\rightarrow$ {\tt -p pid|regex}
+    \item user $\rightarrow$ {\tt -u uid|name|regex}
+    \item group $\rightarrow$ {\tt -g gid|name|regex}
+    \item jail $\rightarrow$ {\tt -j jid|name}
+    \item execname $\rightarrow$ {\tt -k [*]name[*]} {\bf or} {\tt -z regex}
+    \item anything $\rightarrow$ {\tt -r regex}
+  \end{itemize}
+  \bigskip
+  {\Large Data Sampling} (for example, via {\tt cron})
+  \begin{itemize}
+    \item by count $\rightarrow$ {\tt -N num}
+    \item by timeout $\rightarrow$ {\tt -T duration}
+  \end{itemize}
+  \bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{What dwatch Does {\bf Not} Do Well}
+  {\bf DTrace Aggregations} require \underline{debug passthrough} (see below) \\
+  \bigskip
+  {\scriptsize
+    \begin{alltt}
+    dwatch \underline{-d}E '@[{\color{func}probefunc}]=count()' {\color{prov}syscall} \underline{| dtrace -s /dev/stdin}
+    \end{alltt}
+  }
+  DTrace needs to be foreground to catch Ctrl-C \\
+  \bigskip
+  and \\
+  \bigskip
+  {\bf Some features} rely on dwatch being foreground \\
+  and thus {\bf may not work} in debug passthrough
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DWATCH: PROBES
+
+\begin{frame}\frametitle{Using dwatch}
+  \begin{center}
+    {\LARGE {\bf Part 1:} Probes}
+  \end{center}
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: Basic dwatch Syntax}
+  \begin{center}
+    {\LARGE\bf dwatch \underline{$<$probe$>$}} \\
+    \bigskip
+    {\large\em watch a probe} \\
+    \bigskip\bigskip
+    {\Large\bf dwatch \underline{$<$probe$>$,$<$probe$>$,...}} \\
+    \bigskip
+    {\large\em watch multiple probes}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: DTrace Probe Type Overlap (1 of 4)}
+  \begin{center}
+    {\Large\bf dwatch makes {\em $<$probe\_type$>$} \underline{optional}} \\
+    \bigskip
+    33,721+ (99.95\%) of single words are unique \\
+    \bigskip
+    only 17 words (0.05\%) overlap between categories \\
+    \bigskip
+    \includegraphics[scale=0.5]{dot/dtrace_words.pdf}
+  \end{center}
+  \bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: DTrace Probe Type Overlap (2 of 4)}
+  \begin{center}
+    \ \ \ \ \ \includegraphics[scale=0.25]{graphics/dtrace_probe_venn2.pdf} \\
+    \begin{small}
+      \begin{tabular}{r|c|c}
+        & {\color{prov}\normalsize -P} & {\color{func}\normalsize -f} \\
+        \hline
+        fbt & {\color{prov}\bf fbt}::: & {\color{prov} dtmalloc}::{\color{func}\bf fbt}: \\
+        proc & {\color{prov}\bf proc}:{\color{mod} kernel}:: & {\color{prov} dtmalloc}::{\color{func}\bf proc}: \\
+        racct & {\color{prov}\bf racct}:{\color{mod} kernel}:: & {\color{prov} racct}:{\color{mod} kernel}:{\color{func}\bf racct}: \\
+        random & {\color{prov}\bf random}::: & {\color{prov} fbt}:{\color{mod} kernel}:{\color{func}\bf random}: \\
+        syscall & {\color{prov}\bf syscall}::: & {\color{prov} syscall}::{\color{func}\bf syscall}: \\
+      \end{tabular}
+    \end{small}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: DTrace Probe Type Overlap (3 of 4)}
+  \begin{center}
+    \ \ \ \ \ \ \ \ \ \ \ \ \ \includegraphics[scale=0.25]{graphics/dtrace_probe_venn3.pdf} \\
+    \begin{small}
+      \begin{tabular}{r|c|c}
+        & {\color{mod}\normalsize -m} & {\color{func}\normalsize -f} \\
+        \hline
+        deflate & {\color{prov} opencrypto}:{\color{mod}\bf deflate}:: & {\color{prov} fbt}:{\color{mod} kernel}:{\color{func}\bf deflate}: \\
+        namei & {\color{prov} vfs}:{\color{mod}\bf namei}:{\color{func} lookup}: & {\color{prov} fbt}:{\color{mod} kernel}:{\color{func}\bf namei}: \\
+        snp & {\color{prov} fbt}:{\color{mod}\bf snp}:: & {\color{prov} dtmalloc}::{\color{func}\bf snp}: \\
+      \end{tabular}
+    \end{small}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: DTrace Probe Type Overlap (4 of 4)}
+  \begin{center}
+    \ \ \includegraphics[scale=0.25]{graphics/dtrace_probe_venn4.pdf} \\
+    \begin{tabular}{r|c|c}
+      & {\color{func} -f} & {\color{name} -n} \\
+      \hline
+      create & {\color{prov} nfscl}::{\color{func}\bf create}: & :{\color{mod} kernel}::{\color{name}\bf create} \\
+      exit & {\color{prov} syscall}::{\color{func}\bf exit}: & {\color{prov} proc}:{\color{mod} kernel}:{\color{func} none}:{\color{name}\bf exit} \\
+      flush & {\color{prov} nfscl}::{\color{func}\bf flush}:{\color{name} done} & {\color{prov} xbb}:{\color{mod} kernel}::{\color{name}\bf flush} \\
+      free & {\color{prov} fbt}:{\color{mod} kernel}:{\color{func}\bf free}: & {\color{prov} dtmalloc}:::{\color{name}\bf free} \\
+      init & {\color{prov} proc}:{\color{mod} kernel}:{\color{func}\bf init}: & {\color{prov} sctp}:{\color{mod} cwnd}:{\color{func} net}:{\color{name}\bf init} \\
+      malloc & {\color{prov} fbt}:{\color{mod} kernel}:{\color{func}\bf malloc}: & {\color{prov} dtmalloc}:::{\color{name}\bf malloc} \\
+      read & ::{\color{func}\bf read}: & {\color{prov} xbb}:{\color{mod} kernel}::{\color{name}\bf read} \\
+      wakeup & {\color{prov} fbt}:{\color{mod} kernel}:{\color{func}\bf wakup}: & {\color{prov} sched}:{\color{mod} kernel}:{\color{func} none}:{\color{name}\bf wakeup} \\
+      write & ::{\color{func}\bf write}: & {\color{prov} xbb}:{\color{mod} kernel}::{\color{name}\bf write} \\
+    \end{tabular}
+  \end{center}
+  \bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: dwatch Default Action (1 of 3)}
+  {\large
+    {\Large Default action is to print {\bf 6 globals}}
+    \begin{itemize}
+      \item {\tt walltimestamp} in "\%Y \%b \%e \%T" format
+      \item {\tt uid}
+      \item {\tt gid}
+      \item {\tt execname}
+      \item {\tt pid}
+      \item {\tt curthread} cmdline arguments
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 1: dwatch Output (1 of 3)}
+  {\Large\bf dwatch {\color{func}vop\_create}} \\
+  {\scriptsize
+    \begin{alltt}
+{\color{tmagenta}INFO} Watching '{\color{prov}vfs}:{\color{mod}vop}:{\color{func}vop_create}:{\color{name}entry}' ...
+{\color{tgreen}2018 Jun  2 23:45:17} 604.604 touch[57667]: touch foo
+{\color{tgreen}2018 Jun  2 23:45:23} 604.604 touch[57685]: touch bar
+{\color{tgreen}2018 Jun  2 23:45:43} 0.0 ruby23[57697]: ruby23: chef-client worker: ppid=886;start=23:45:40;
+{\color{tgreen}2018 Jun  2 23:45:43} 0.0 ruby23[57697]: ruby23: chef-client worker: ppid=886;start=23:45:40;
+{\color{tgreen}2018 Jun  2 23:45:43} 0.0 ruby23[57697]: ruby23: chef-client worker: ppid=886;start=23:45:40;
+{\color{tgreen}2018 Jun  2 23:45:43} 0.0 ruby23[57697]: ruby23: chef-client worker: ppid=886;start=23:45:40;
+{\color{tgreen}2018 Jun  2 23:45:43} 0.0 pkg[57844]: pkg rquery %v nagios-check_zpools
+{\color{tgreen}2018 Jun  2 23:45:43} 0.0 pkg[57844]: pkg rquery %v nagios-check_zpools
+{\color{tgreen}2018 Jun  2 23:45:43} 0.0 pkg[57844]: pkg rquery %v nagios-check_zpools
+{\color{tgreen}2018 Jun  2 23:45:43} 0.0 pkg[57844]: pkg rquery %v nagios-check_zpools
+          {\color{tgreen}\vdots}           \vdots       \vdots                   \vdots
+    \end{alltt}
+  }
+  \bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: dwatch Default Action (2 of 3)}
+  {\large
+    {\Large Default action with {\bf -F} is to print {\bf 10 globals}} \\
+    Previously mentioned 6 plus ...
+    \begin{itemize}
+      \item {\tt {\color{prov} probeprov}}
+      \item {\tt {\color{mod} probemod}}
+      \item {\tt {\color{func} probefunc}}
+      \item {\tt {\color{name} probename}}
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 1: dwatch Output (2 of 3)}
+  {\Large\bf dwatch \underline{-F} {\color{prov}proc}} \\
+  {\scriptsize
+    \begin{alltt}
+{\color{tmagenta}INFO} Watching '{\color{prov}proc}:::' ...
+{\color{tgreen}2018 Jun  3 02:54:04} 0.0 intr[12]:  | {\color{prov}proc}:{\color{mod}kernel}:{\color{func}none}:{\color{name}signal-send} intr
+{\color{tgreen}2018 Jun  3 02:54:04} 604.604 bash[66077]: -> {\color{prov}proc}:{\color{mod}kernel}:{\color{func}ctor}:{\color{name}entry} -bash
+{\color{tgreen}2018 Jun  3 02:54:04} 604.604 bash[66077]: <- {\color{prov}proc}:{\color{mod}kernel}:{\color{func}ctor}:{\color{name}return} -bash
+{\color{tgreen}2018 Jun  3 02:54:04} 604.604 bash[66077]:  | {\color{prov}proc}:{\color{mod}kernel}:{\color{func}none}:{\color{name}create} -bash
+{\color{tgreen}2018 Jun  3 02:54:04} 604.604 bash[66160]:  | {\color{prov}proc}:{\color{mod}kernel}:{\color{func}none}:{\color{name}exit} -bash
+{\color{tgreen}2018 Jun  3 02:54:04} 604.604 bash[66160]:  | {\color{prov}proc}:{\color{mod}kernel}:{\color{func}none}:{\color{name}signal-send} -bash
+{\color{tgreen}2018 Jun  3 02:54:04} 604.604 bash[66077]: -> {\color{prov}proc}:{\color{mod}kernel}:{\color{func}dtor}:{\color{name}entry} -bash
+{\color{tgreen}2018 Jun  3 02:54:04} 604.604 bash[66077]: <- {\color{prov}proc}:{\color{mod}kernel}:{\color{func}dtor}:{\color{name}return} -bash
+{\color{tgreen}2018 Jun  3 02:54:04} 604.604 bash[66077]: -> {\color{prov}proc}:{\color{mod}kernel}:{\color{func}ctor}:{\color{name}entry} -bash
+{\color{tgreen}2018 Jun  3 02:54:04} 604.604 bash[66077]: <- {\color{prov}proc}:{\color{mod}kernel}:{\color{func}ctor}:{\color{name}return} -bash
+          {\color{tgreen}\vdots}             \vdots          \vdots                   \vdots
+    \end{alltt}
+  }
+  \bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: dwatch Default Action (3 of 3)}
+  \begin{center}
+    {\Large {\bf -R} enables a mini process tree!}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 1: dwatch Output (2 of 3)}
+  {\Large\bf dwatch \underline{-R} {\color{func}execve}} \\
+  {
+    \begin{alltt}
+{\color{tmagenta}INFO} Watching '{\color{prov}syscall}:{\color{mod}freebsd}:{\color{func}execve}:{\color{name}entry}' ...
+{\color{tgreen}2018 Jun  4 00:12:22} 604.604 sshd[18434]: -bash
+ -+= 01048 0.0 /usr/sbin/sshd
+  \textbackslash-+= 18432 0.604 sshd: dteske [priv]
+    \textbackslash-+= 18434 604.604 sshd: dteske@pts/1
+      \textbackslash-+= 18435 604.604 -bash
+{\color{tgreen}2018 Jun  4 00:12:22} 604.604 bash[18436]: uname -s
+ -+= 18434 604.604 sshd: dteske@pts/1
+  \textbackslash-+= 18435 604.604 -bash
+    \textbackslash-+= 18436 604.604 -bash
+      \textbackslash-+= 18437 604.604 uname -s
+{\color{tgreen}\dots}                  \dots
+    \end{alltt}
+  }
+\end{frame}
+
+\begin{frame}\frametitle{Part 1: Other DTrace Globals}
+  {\Large\center Globals {\bf NOT} displayed by dwatch} (unless asked for) \\
+  \bigskip
+  {\bf cpu} = active CPU (number) \\
+  {\bf id} = probe ID \\
+  {\bf tid} = current thread id \\
+  {\bf jid} = jail id of current process \\
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DWATCH: ACTIONS
+
+\begin{frame}\frametitle{Using dwatch}
+  \begin{center}
+    {\LARGE {\bf Part 2:} Actions and Predicates}
+  \end{center}
+\end{frame}
+
+\begin{frame}\frametitle{Part 2: Intermediate dwatch Syntax}
+  \begin{center}
+    {\LARGE\bf dwatch \underline{\em -E "actions"} $<$probe$>$[,...]} \\
+    \bigskip
+    {\Large -E can be specified multiple times} \\
+    \bigskip\bigskip
+    {\LARGE\bf dwatch \underline{\em -t "tests"} $<$probe$>$[,...]} \\
+    \bigskip
+    {\Large -t can be specified multiple times} \\
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 2: dwatch Output (1 of 2)}
+  {\large\bf dwatch \underline{-E 'printf("pid \%i sig \%i", arg0, arg1)'} {\color{func}kill}} \\
+  {\small
+    \begin{alltt}
+{\color{tmagenta}INFO} Watching '{\color{prov}syscall}::{\color{func}kill}:{\color{name}entry}' ...
+{\color{tgreen}2018 Jun  3 03:29:15} 604.604 bash[57550]: pid 57550 sig 0
+{\color{tgreen}2018 Jun  3 03:29:23} 604.604 bash[68584]: pid 68584 sig 2
+{\color{tgreen}2018 Jun  3 03:29:33} 604.604 bash[57550]: pid 57549 sig 0
+{\color{tgreen}2018 Jun  3 03:29:58} 604.604 bash[57550]: pid -68589 sig 15
+{\color{tgreen}2018 Jun  3 03:29:58} 604.604 bash[57550]: pid -68589 sig 19
+          {\color{tgreen}\vdots}             \vdots          \vdots              \vdots
+    \end{alltt}
+  }
+  \bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 2: dwatch Output (2 of 2)}
+  {\large\bf dwatch \underline{-t 'this->caller\_execname == "bash"'} {\color{func}execve}} \\
+  {\small
+    \begin{alltt}
+{\color{tmagenta}INFO} Watching '{\color{prov}syscall}:{\color{mod}freebsd}:{\color{func}execve}:{\color{name}entry}' ...
+{\color{tmagenta}INFO} Setting test: this->caller_execname == "bash"
+{\color{tgreen}2018 Jun  3 05:26:48} 604.604 bash[57550]: ls -AGCF
+{\color{tgreen}2018 Jun  3 05:27:02} 604.604 bash[57550]: date
+{\color{tgreen}2018 Jun  3 05:27:19} 604.604 bash[57550]: /bin/pwd
+{\color{tgreen}2018 Jun  3 05:27:40} 604.604 bash[57550]: id
+{\color{tgreen}2018 Jun  3 05:27:45} 604.604 bash[57550]: whoami
+          {\color{tgreen}\vdots}             \vdots          \vdots         \vdots
+    \end{alltt}
+  }
+  \bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DWATCH: PROFILES
+
+\begin{frame}\frametitle{Using dwatch}
+  \begin{center}
+    {\LARGE {\bf Part 3:} Profiles}
+  \end{center}
+\end{frame}
+
+\begin{frame}\frametitle{Part 3: Advanced dwatch Syntax}
+  \begin{center}
+    {\LARGE\bf dwatch \underline{\em -X profile}} \\
+    \bigskip
+    {\Large loads a ``canned'' solution} \\
+    \bigskip\bigskip
+    {\LARGE\bf dwatch \underline{\em -Q}} \\
+    \bigskip
+    {\Large list available profiles}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 3: dwatch Profiles (1 of 8)}
+  {\Large dwatch {\bf Profiles} automate:} \\
+  \bigskip
+  {\large
+    \begin{itemize}
+      \item Probe selection
+      \item Data collection
+      \item Formatting and display
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 3: dwatch Profiles (2 of 8)}
+  \begin{center}
+    {\Large\bf Currently 81 Profiles in base} \\
+    \bigskip
+    \includegraphics[scale=0.20]{dot/dwatch_base_profiles.pdf}
+  \end{center}
+  \bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 3: dwatch Profiles (3 of 8)}
+  \begin{center}
+    {\Large\bf 11 {\color{prov}proc} Profiles for Process Accounting} \\
+    \bigskip
+    \includegraphics[scale=0.5]{dot/dwatch_proc_profiles.pdf} \\
+  \end{center}
+  \bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 3: dwatch Profiles (4 of 8)}
+  \begin{center}
+    {\Large\bf 18 {\color{prov}syscall} Profiles} \\
+    \bigskip
+    \includegraphics[scale=0.5]{dot/dwatch_syscall_profiles.pdf} \\
+  \end{center}
+  \bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 3: dwatch Profiles (5 of 8)}
+  \begin{center}
+    {\Large\bf 22 Profiles for Network Monitoring} \\
+    \bigskip
+    \includegraphics[scale=0.25]{dot/dwatch_networking_profiles.pdf} \\
+  \end{center}
+  \bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 3: dwatch Profiles (6 of 8)}
+  \begin{center}
+    {\Large\bf 9 {\color{prov}vfs} Profiles for Filesystem Monitoring} \\
+    \bigskip
+    \includegraphics[scale=0.5]{dot/dwatch_vfs_profiles.pdf} \\
+  \end{center}
+  \bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 3: dwatch Profiles (7 of 8)}
+  \begin{center}
+    {\Large\bf 18 {\color{prov}sched} Profiles for CPU monitoring} \\
+    \bigskip
+    \includegraphics[scale=0.3]{dot/dwatch_sched_profiles.pdf} \\
+  \end{center}
+  \bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{Part 3: dwatch Profiles (8 of 8)}
+  \begin{center}
+    {\Large\bf 3 {\color{prov}io} Profiles for Disk I/O} \\
+    \bigskip
+    \includegraphics[scale=0.75]{dot/dwatch_io_profiles.pdf} \\
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 3: dwatch Output (1 of 4)}
+  {\large Use `{\tt -r regex}' with `{\tt -Q}' to find profiles} \\
+  \bigskip
+  {\LARGE\bf dwatch \underline{-Qr {\color{mod}vop}}} \\
+  {\small
+    \begin{alltt}
+PROFILES:
+        {\color{tred}vop}_create        {\color{tred}vop}_lookup        {\color{tred}vop}_mkdir
+        {\color{tred}vop}_mknod         {\color{tred}vop}_readdir       {\color{tred}vop}_remove
+        {\color{tred}vop}_rename        {\color{tred}vop}_rmdir         {\color{tred}vop}_symlink
+    \end{alltt}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 3: dwatch Output (2 of 4)}
+  {\LARGE\bf dwatch \underline{-X {\color{func}kill}}} \\
+  {\footnotesize
+    \begin{alltt}
+{\color{tmagenta}INFO} Sourcing {\color{func}kill} profile [found in /usr/libexec/dwatch]
+{\color{tmagenta}INFO} Watching '{\color{prov}syscall}::{\color{mod}kill}:{\color{name}entry}' ...
+{\color{tgreen}2018 Jun  4 00:34:05} 604.604 bash[19309]: signal 0 to pid 19309
+{\color{tgreen}2018 Jun  4 00:34:21} 604.604 bash[19372]: signal 2 to pid 19372
+{\color{tgreen}2018 Jun  4 00:34:32} 604.604 bash[19309]: signal 0 to pid 19308
+{\color{tgreen}2018 Jun  4 00:34:47} 604.604 bash[19309]: signal 15 to pid -19725
+{\color{tgreen}2018 Jun  4 00:34:47} 604.604 bash[19309]: signal 19 to pid -19725
+          {\color{tgreen}\vdots}             \vdots          \vdots              \vdots
+    \end{alltt}
+  }
+  \bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 3: dwatch Output (3 of 4)}
+  {\large\bf dwatch -X {\color{func}open} \underline{-t 'execname != "sendmail"'}} \\
+  {\footnotesize
+    \begin{alltt}
+{\color{tmagenta}INFO} Sourcing {\color{func}open} profile [found in /usr/libexec/dwatch]
+{\color{tmagenta}INFO} Watching '{\color{prov}syscall}::{\color{func}open}:{\color{name}entry}, {\color{prov}syscall}::{\color{func}openat}:{\color{name}entry}' ...
+{\color{tmagenta}INFO} Setting test: execname!="sendmail"
+{\color{tgreen}2018 Jun  4 03:11:21} 0.0 turnserver[896]: /var/log/turn_2018-06-04.log
+{\color{tgreen}2018 Jun  4 03:11:21} 0.0 dtrace[26718]: /usr/share/zoneinfo/UTC
+{\color{tgreen}2018 Jun  4 03:11:21} 0.0 dtrace[26718]: /usr/share/zoneinfo/posixrules
+{\color{tgreen}2018 Jun  4 03:11:26} 0.0 turnserver[896]: /var/log/turn_2018-06-04.log
+{\color{tgreen}2018 Jun  4 03:11:28} 604.604 ls[26719]: /etc/libmap.conf
+{\color{tgreen}2018 Jun  4 03:11:28} 604.604 ls[26719]: /usr/local/etc/libmap.d
+{\color{tgreen}2018 Jun  4 03:11:28} 604.604 ls[26719]: /usr/local/etc/libmap.d/nginx.conf
+{\color{tgreen}2018 Jun  4 03:11:28} 604.604 ls[26719]: /var/run/ld-elf.so.hints
+{\color{tgreen}2018 Jun  4 03:11:28} 604.604 ls[26719]: /lib/libxo.so.0
+{\color{tgreen}2018 Jun  4 03:11:28} 604.604 ls[26719]: /lib/libutil.so.9
+          {\color{tgreen}\vdots}             \vdots         \vdots             \vdots
+    \end{alltt}
+  }
+  \bigskip
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Part 3: dwatch Output (4 of 4)}
+  {\Large\bf dwatch -X {\color{func}vop\_lookup} \underline{-r /foo/}} \\
+  {\footnotesize
+    \begin{alltt}
+{\color{tmagenta}INFO} Sourcing {\color{func}vop_lookup} profile [found in /usr/libexec/dwatch]
+{\color{tmagenta}INFO} Watching '{\color{prov}vfs}:{\color{mod}vop}:{\color{func}vop_lookup}:{\color{name}entry}' ...
+{\color{tmagenta}INFO} Filtering filter: /foo/
+{\color{tgreen}2018 Jun  4 03:22:07} 604.604 bash[27166]: /usr/home/dteske{\color{tred}/foo/}.
+{\color{tgreen}2018 Jun  4 03:22:07} 604.604 bash[19309]: /usr/home/dteske{\color{tred}/foo/}.
+{\color{tgreen}2018 Jun  4 03:22:07} 604.604 bash[19309]: /usr/home/dteske{\color{tred}/foo/}.
+{\color{tgreen}2018 Jun  4 03:22:12} 604.604 bash[19309]: /usr/home/dteske{\color{tred}/foo/}.
+{\color{tgreen}2018 Jun  4 03:22:12} 604.604 touch[27168]: /usr/home/dteske{\color{tred}/foo/}bar
+{\color{tgreen}2018 Jun  4 03:22:12} 604.604 touch[27168]: /usr/home/dteske{\color{tred}/foo/}bar
+{\color{tgreen}2018 Jun  4 03:22:31} 604.604 mkdir[27169]: /usr/home/dteske{\color{tred}/foo/}baz
+{\color{tgreen}2018 Jun  4 03:22:34} 604.604 bash[19309]: /home/dteske{\color{tred}/foo/}baz
+{\color{tgreen}2018 Jun  4 03:22:34} 604.604 bash[19309]: /usr/home/dteske{\color{tred}/foo/}baz
+{\color{tgreen}2018 Jun  4 03:22:34} 604.604 bash[19309]: /usr/home/dteske{\color{tred}/foo/}baz
+          {\color{tgreen}\vdots}             \vdots          \vdots                 \vdots
+    \end{alltt}
+  }
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TALK: TRANSITION
+
+\begin{frame}\frametitle{}
+  \begin{center}
+    {\Huge\bf New ports}
+  \end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PORTS: NEW PORTS
+
+\begin{frame}\frametitle{New Ports Using dwatch}
+  \begin{center}
+    {\Large sysutils/{\bf dwatch-pwsnoop}} \\
+    password snooping \\
+    \bigskip
+    {\Large sysutils/{\bf dwatch-gource}} \\
+    network, process, filesystem, and syscall visualization with {\em gource}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PORTS: PROFILES
+
+\begin{frame}\frametitle{Ports: Profiles}
+  \begin{center}
+    {\Large\bf More dwatch profiles!} \\
+    \bigskip
+    \includegraphics[scale=0.45]{dot/dwatch_ports_profiles.pdf}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PORTS: LIVE DEMO
+
+\begin{frame}\frametitle{}
+  \begin{center}
+    {\Huge\bf New ports (Live Demo)}
+  \end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PORTS: YOUTUBE
+
+\begin{frame}\frametitle{}
+  \begin{center}
+    {\tiny this slide intentionally left blank}
+  \end{center}
+\end{frame}
+
+% youtube videos demonstrating what dwatch-gource can do
+
+\begin{frame}\frametitle{New Ports: Canned Demos}
+  Network Visualization:
+  \begin{itemize}
+    \item \href{https://youtu.be/0I8ZozQKo2w}{youtu.be/0I8ZozQKo2w}
+  \end{itemize}
+  \bigskip
+  Syscall Visualization:
+  \begin{itemize}
+    \item \href{https://youtu.be/eYJVJF6ku3c}{youtu.be/eYJVJF6ku3c}
+  \end{itemize}
+  \bigskip
+  Process Visualization (single vs. threaded buildworld)
+  \begin{itemize}
+    \item \href{https://youtu.be/2L2QXETIzVI}{youtu.be/2L2QXETIzVI}
+  \end{itemize}
+  \bigskip
+  Filesystem Visualization (chef-client run)
+  \begin{itemize}
+    \item \href{https://youtu.be/spucbh09zT8}{youtu.be/spucbh09zT8}
+  \end{itemize}
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% THANKS
+
+\begin{frame}\frametitle{Special Thanks}
+  \begin{itemize}
+    \item Spouse (hand-drawn ``Peaches'' mascot)
+    \item Antti Antinoja (vectorized ``Peaches'')
+    \item FreeBSD reviewers gnn, markj, bdrewery
+    \item FreeBSD community feedback
+    \item You! The audience
+  \end{itemize}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FEEDBACK
+
+\begin{frame}\frametitle{Feedback}
+  \begin{center}
+    {\LARGE\bf Questions?} \\
+    \bigskip\bigskip
+    \href{mailto:dteske@FreeBSD.org}{{\large\bf dteske}@FreeBSD.org} {\huge |} \href{https://fraubsd.org/doc/bsdcan/2018/slides}{\underline{\large\bf fraubsd.org/doc}/bsdcan/2018/slides}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EXTRA
+
+\begin{frame}\frametitle{}
+  \begin{center}
+    {\tiny this slide intentionally left blank}
+  \end{center}
+\end{frame}
+
+\begin{frame}\frametitle{DTrace and Competitor Timeline}
+  \begin{center}
+    \includegraphics[scale=0.2]{graphs/dtrace_timeline.pdf}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+\begin{frame}\frametitle{More FreeBSD Fun}
+  \begin{center}
+    {\Large {\bf Gandi.net} sent me rare {\bf T-Shirt} (left)} \\
+    \bigskip
+    {\Large I thanked them with {\bf ASCII art} (right)} \\
+    \bigskip
+    \includegraphics[scale=0.25]{graphics/gandi-boot.pdf}
+  \end{center}
+  \bigskip\bigskip\bigskip
+\end{frame}
+
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% END
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

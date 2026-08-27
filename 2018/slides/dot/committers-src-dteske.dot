@@ -1,0 +1,62 @@
+# $FreeBSD: head/share/misc/committers-src.dot 334113 2018-05-23 19:17:17Z luporl $
+
+# This file is meant to list all FreeBSD src committers and describe the
+# mentor-mentee relationships between them.
+# The graphical output can be generated from this file with the following
+# command:
+# $ dot -T png -o file.png committers-src.dot
+#
+# The dot binary is part of the graphics/graphviz port.
+
+digraph src {
+
+	margin = 0;
+
+# Node definitions follow this example:
+#
+#   foo [label="Foo Bar\nfoo@FreeBSD.org\n????/??/??"]
+#
+# ????/??/?? is the date when the commit bit was obtained, usually the one you
+# can find looking at svn logs for the svnadmin/conf/access file.
+# Use YYYY/MM/DD format.
+#
+# For returned commit bits, the node definition will follow this example:
+#
+#   foo [label="Foo Bar\nfoo@FreeBSD.org\n????/??/??\n????/??/??"]
+#
+# The first date is the same as for an active committer, the second date is
+# the date when the commit bit has been returned. Again, check svn logs.
+
+node [color=grey62, style=filled, bgcolor=black];
+
+# Alumni go here.. Try to keep things sorted.
+
+node [color=lightblue2, style=filled, bgcolor=black];
+
+# Current src committers go here. Try to keep things sorted.
+
+adrian [label="Adrian Chadd\nadrian@FreeBSD.org\n2000/07/03"]
+dteske [label="Devin Teske\ndteske@FreeBSD.org\n2012/04/10"]
+eivind [label="Eivind Eklund\neivind@FreeBSD.org\n1997/02/02"]
+emaste [label="Ed Maste\nemaste@FreeBSD.org\n2005/10/04"]
+julian [label="Julian Elischer\njulian@FreeBSD.org\n1993/04/19"]
+rwatson [label="Robert N. M. Watson\nrwatson@FreeBSD.org\n1999/12/16"]
+
+# Pseudo target representing rev 1.1 of commit.allow
+
+# Here are the mentor/mentee relationships.
+# Group together all the mentees for a particular mentor.
+# Keep the list sorted by mentor login.
+
+julian -> adrian
+
+adrian -> dteske
+
+eivind -> rwatson
+
+emaste -> dteske
+
+rwatson -> adrian
+rwatson -> emaste
+
+}

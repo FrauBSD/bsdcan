@@ -1,0 +1,40 @@
+strict digraph "" {
+
+	/*
+	 * Graph setup and orientation
+	 */
+	margin = 0;   // minimize white border
+	rankdir = LR; // create ranks left-to-right
+
+	/*
+	 * Default node attributes
+	 */
+	node [
+		fontname = "Arial",
+		fontsize = 14,
+		fontcolor = "white",
+		shape = record,
+		width = "1.33",
+		height = "1.0",
+		fixedsize = true,
+		style = "filled",
+		colorscheme = "set14",
+		color = "white",
+	];
+
+	/*
+	 * Nodes
+	 */
+	funcs [ label = "-f|33,453+\nunique\nwords", fillcolor = 3 ];
+	provs [ label = "-P|26+\nunique\nwords", fillcolor = 1 ];
+	mods  [ label = "-m|23+\nunique\nwords", fillcolor = 2 ];
+	names [ label = "-n|211+\nunique\nwords", fillcolor = 4 ];
+
+	/*
+	 * Overlaps
+	 */
+	edge [dir = both, len = 3];
+	provs -> funcs [label = 5];
+	mods -> funcs [label = 3];
+	names -> funcs [label = 9];
+}

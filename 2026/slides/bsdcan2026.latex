@@ -1,0 +1,111 @@
+%
+% Slides for BSDCan 2026 Conference.
+%
+% NB: Requires LaTeX and LaTeX Beamer [1] to compile.
+%
+% [1] http://latex-beamer.sourceforge.net
+%
+
+\documentclass{beamer}
+
+\usepackage[english]{babel}
+\usepackage{alltt}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\definecolor{red}{rgb}{0.8,0.0,0.0}
+\definecolor{darkred}{rgb}{0.55,0.0,0.0}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=red,
+    filecolor=red,      
+    urlcolor=red,
+}
+
+\mode<presentation>
+{
+  \definecolor{beamer@gker}{rgb}{0.8,0.0,0.0}
+  \setbeamercolor*{structure}{fg=beamer@gker}
+  \logo{\includegraphics[scale=0.5]{graphics/logo.pdf}}
+}
+
+\title{Lightning Talk}
+\subtitle{\color{darkred} with Daemons}
+\author{Devin Teske \\ \href{mailto:dteske@FreeBSD.org}{dteske@FreeBSD.org}}
+\institute{\includegraphics[scale=0.66]{graphics/logo.pdf}}
+\date{BSDCan Conference \\
+University of Ottawa, Ontario \\
+June 17-20, 2026}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TITLE
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TALK: TRANSITION
+
+\begin{frame}\frametitle{}
+  \begin{center}
+    {\Huge\bf New Artwork}
+  \end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ARTWORK: INTRO
+
+\begin{frame}\frametitle{New Artwork}
+  \begin{center}
+    \includegraphics[scale=0.23]{graphics/Beastette\_Silhouette.pdf}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ARTWORK: REVEAL
+
+\begin{frame}\frametitle{New Artwork: Beastette}
+  \begin{center}
+    \includegraphics[scale=0.23]{graphics/Beastette.pdf}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ARTWORK: REVEAL
+
+\begin{frame}\frametitle{New Artwork: Beastette}
+  \begin{center}
+    \includegraphics[scale=0.31]{graphics/Beastette2.pdf}
+  \end{center}
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% THANKS
+
+%?\begin{frame}\frametitle{Special Thanks}
+%?  \begin{itemize}
+%?    \item Kirk McKusick and John Lasseter for Beastie
+%?    \item FreeBSD Foundation and BSDCan organizers
+%?    \item FreeBSD community
+%?    \item You! The audience
+%?  \end{itemize}
+%?  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+%?\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FEEDBACK
+
+%?\begin{frame}\frametitle{Feedback}
+%?  \begin{center}
+%?    {\LARGE\bf Questions?} \\
+%?    \bigskip\bigskip
+%?    \href{mailto:dteske@FreeBSD.org}{{\large\bf dteske}@FreeBSD.org}
+%?  \end{center}
+%?  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+%?\end{frame}
+
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% END
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

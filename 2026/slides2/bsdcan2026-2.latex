@@ -1,0 +1,293 @@
+%
+% Slides for BSDCan 2026 Conference.
+%
+% NB: Requires LaTeX and LaTeX Beamer [1] to compile.
+%
+% [1] http://latex-beamer.sourceforge.net
+%
+
+\documentclass{beamer}
+
+\usepackage[english]{babel}
+\usepackage{alltt}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\definecolor{red}{rgb}{0.8,0.0,0.0}
+\definecolor{darkred}{rgb}{0.55,0.0,0.0}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=red,
+    filecolor=red,      
+    urlcolor=red,
+}
+
+\mode<presentation>
+{
+  \definecolor{beamer@gker}{rgb}{0.8,0.0,0.0}
+  \setbeamercolor*{structure}{fg=beamer@gker}
+  \logo{\includegraphics[scale=0.5]{graphics/logo.pdf}}
+}
+
+\title{Lightning Talk}
+\subtitle{\color{darkred} Framework Laptops}
+\author{Devin Teske \\ \href{mailto:dteske@FreeBSD.org}{dteske@FreeBSD.org}}
+\institute{\includegraphics[scale=0.66]{graphics/logo.pdf}}
+\date{BSDCan Conference \\
+University of Ottawa, Ontario \\
+June 17-20, 2026}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TITLE
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TALK: TRANSITION
+
+\begin{frame}\frametitle{}
+  \begin{center}
+    {\LARGE\bf Framework BoF + Hallway Track}
+  \end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% WHAT WORKS
+
+\begin{frame}\frametitle{Framework 12 + FreeBSD 16}
+  {\LARGE {\bf What's Working?}} \\
+  {\Large
+    \bigskip
+    \begin{itemize}
+      \item {\bf Suspend/Resume Cycle (S0ix/S2)} \\
+      \begin{itemize}
+        \item {\Large hw.acpi.power\_button\_state=suspend\_to\_idle}
+        \item {\Large hw.acpi.lid\_switch\_state=suspend\_to\_idle}
+        \item {\Large\bf 4-line patch to ig(4) required}
+      \end{itemize}
+      \item Trackpad gestures \\
+      \begin{itemize}
+        \item {\Large 2-finger scroll}
+        \item {\Large 3-finger swipe}
+      \end{itemize}
+      \item Trackpad multi-finger click \\
+      \begin{itemize}
+        \item {\Large 2-finger = Right (CMenu)}
+        \item {\Large 3-finger = Middle (Paste)}
+      \end{itemize}
+      \item {\bf Touchscreen}
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% WHAT WORKS
+
+\begin{frame}\frametitle{Framework 12 + FreeBSD 16}
+  {\LARGE {\bf S2 Idle Patch}} \\
+  {\Large
+    \bigskip
+    \begin{itemize}
+      \item {\bf Not Framework Specific} \\
+      \item {\bf Intel} specific \\
+      \begin{itemize}
+        \item {\Large Low Power Sub-System (LPSS) }
+        \item {\Large\bf Skylake or newer}
+        \item {\Large Including Alder/Raptor Lake-P}
+      \end{itemize}
+      \item Hardware {\bf Lies} \\
+      \begin{itemize}
+        \item {\Large Silicon never asserts RESTORE\_REQUIRED}
+        \item {\Large Fix in ig4iic\_resume()}
+      \end{itemize}
+      \item {\bf One small change} \\
+      \begin{itemize}
+        \item {\Large {\bf All} I2C-HID devices come back}
+      \end{itemize}
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MEDIA
+
+\begin{frame}\frametitle{Framework 12 + FreeBSD 16}
+  {\LARGE {\bf Desktop Environment (DE)}} \\
+  {\small Below the Window Manager} \\
+  {\Large
+    \bigskip
+    \begin{itemize}
+      \item {\bf Volume} \\
+      \begin{itemize}
+        \item {\Large Mute (Fn+F1)}
+        \item {\Large Down (Fn+F2)}
+        \item {\Large Up (Fn+F3)}
+        \item {\Large Output (Fn+F12)}
+      \end{itemize}
+      \item {\bf Brightness} \\
+      \begin{itemize}
+        \item {\Large Down (Fn+F7)}
+        \item {\Large Up (Fn+F8)}
+      \end{itemize}
+      \item {\bf Prt Scr (Fn+F9)} \\
+      \begin{itemize}
+        \item {\Large Take screenshot}
+      \end{itemize}
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MONITORS
+
+\begin{frame}\frametitle{Framework 12 + FreeBSD 16}
+  {\LARGE {\bf External Display Support}} \\
+  {\Large
+    \bigskip
+    \begin{itemize}
+      \item {\bf Keyboard} \\
+      \begin{itemize}
+        \item {\Large Screen Mirroring Key (Fn+F9) [Toggle]}
+      \end{itemize}
+      \item {\bf Window Manager (fvwm3)} \\
+      \begin{itemize}
+        \item {\Large Screen Mirroring menu}
+        \item {\Large Screen Extension menu}
+        \begin{itemize}
+          \item {\Large Extend Right}
+          \item {\Large Extend Left}
+          \item {\Large Extend Above}
+        \end{itemize}
+        \item {\Large Recovery after hard disconnect} \\
+        \begin{itemize}
+          \item {\Large Laptop Display Only}
+        \end{itemize}
+      \end{itemize}
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% INTERFACE
+
+\begin{frame}\frametitle{Framework 12 + FreeBSD 16}
+  {\LARGE {\bf Window Manager (fvwm3)}} \\
+  {\Large
+    \bigskip
+    \begin{itemize}
+      \item {\bf Super (Framework) key} \\
+      \begin{itemize}
+        \item {\Large Alt+Esc emulation}
+        \item {\Large Open Start Menu}
+      \end{itemize}
+      \item {\bf Battery level indicator} \\
+      \begin{itemize}
+        \item {\Large AC detection}
+        \item {\Large fed by acpiconf -i 0}
+      \end{itemize}
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LIMITATIONS
+
+\begin{frame}\frametitle{Framework 12 + FreeBSD 16}
+  {\LARGE {\bf Limitations}} \\
+  {\Large
+    \bigskip
+    \begin{itemize}
+      \item {\bf Wake on AC / charge event} \\
+      \begin{itemize}
+        \item {\Large BIOS setting ignored}
+        \item {\Large AC unplug immediately wakes from s2idle}
+        \item {\Large AC charge event also causes wake}
+        \item {\Large No way to filter event in acpiec}
+        \item {\Large\bf Firmware issue}
+      \end{itemize}
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% WHATS NEXT
+
+\begin{frame}\frametitle{Framework 12 + FreeBSD 16}
+  {\LARGE {\bf What's Next?}} \\
+  {\Large
+    \bigskip
+    \begin{itemize}
+      \item {\bf More trackpad gestures} \\
+      \begin{itemize}
+        \item {\Large Pinch to zoom}
+      \end{itemize}
+      \item {\bf More touchpad gestures} \\
+      \begin{itemize}
+        \item {\Large Pinch to zoom}
+        \item {\Large 2-finger scroll}
+        \item {\Large 3-finger swipe}
+      \end{itemize}
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TIMELINE
+
+\begin{frame}\frametitle{Framework 12 + FreeBSD 16}
+  {\LARGE {\bf How we got here}} \\
+  {\Large
+    \bigskip
+    \begin{itemize}
+      \item {\bf Jun 13 (Sat) :: Baseline} \\
+      \begin{itemize}
+        \item {\Large Touch pad/screen dead after every resume}
+      \end{itemize}
+      \item {\bf Jun 13-17 (Sat-Wed) :: Diagnosis} \\
+      \begin{itemize}
+        \item {\Large Traced silence past iichid down to ig4 bus}
+        \item {\Large Controller registers reading 0x0}
+        \item {\Large Every transfer fails with IIC\_ETIMEOUT}
+      \end{itemize}
+      \item {\bf Jun 18 (Thu) :: Root-Cause Found} \\
+      \begin{itemize}
+        \item {\Large LPSS DEVICE\_IDLE never cleared on resume}
+        \item {\Large RESTORE\_REQUIRED not asserted on silicon}
+        \item {\Large Patched ig4iic\_resume()}
+        \item {\Large \href{https://reviews.freebsd.org/D57673}{https://reviews.freebsd.org/D57673}}
+      \end{itemize}
+    \end{itemize}
+  }
+  \bigskip\bigskip\bigskip\bigskip\bigskip
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% THANKS
+
+%?\begin{frame}\frametitle{Special Thanks}
+%?  \begin{itemize}
+%?    \item Kirk McKusick and John Lasseter for Beastie
+%?    \item FreeBSD Foundation and BSDCan organizers
+%?    \item FreeBSD community
+%?    \item You! The audience
+%?  \end{itemize}
+%?  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+%?\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FEEDBACK
+
+%?\begin{frame}\frametitle{Feedback}
+%?  \begin{center}
+%?    {\LARGE\bf Questions?} \\
+%?    \bigskip\bigskip
+%?    \href{mailto:dteske@FreeBSD.org}{{\large\bf dteske}@FreeBSD.org}
+%?  \end{center}
+%?  \bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip\bigskip
+%?\end{frame}
+
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% END
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,81 @@
+/* vim: set filetype=dot :: Vi/ViM */
+strict digraph {
+
+	/*
+	 * Graph setup and orientation
+	 */
+	margin = 0; // minimize white border
+
+	/*
+	 * Default node attributes
+	 */
+	node [
+		fontname = "Arial",
+		fontsize = 16,
+		fontcolor = "white",
+		shape = box,
+		style = "filled",
+		colorscheme = "set15",
+		penwidth = 0,
+	];
+
+	/*
+	 * Aliases
+	 */
+	{
+		node [ fillcolor = 5 ];
+		"sched-cpu";
+		"sched-exec";
+		"sched-pri";
+		"sched-queue";
+	};
+
+	/*
+	 * Providers
+	 */
+	{
+		node [ fillcolor = 1 ];
+		sched;
+	};
+
+	/*
+	 * Names
+	 */
+	{
+		node [ fillcolor = 4 ];
+		"sched-change-pri" [ label = "change-pri" ];
+		"sched-dequeue" [ label = "dequeue" ];
+		"sched-enqueue" [ label = "enqueue" ];
+		"sched-lend-pri" [ label = "lend-pri" ];
+		"sched-load-change" [ label = "load-change" ];
+		"sched-off-cpu" [ label = "off-cpu" ];
+		"sched-on-cpu" [ label = "on-cpu" ];
+		"sched-preempt" [ label = "preempt" ];
+		"sched-remain-cpu" [ label = "remain-cpu" ];
+		"sched-sleep" [ label = "sleep" ];
+		"sched-surrender" [ label = "surrender" ];
+		"sched-tick" [ label = "tick" ];
+		"sched-wakeup" [ label = "wakeup" ];
+	};
+
+	/*
+	 * Relationships
+	 */
+	sched -> "sched-cpu";
+	sched -> "sched-exec";
+	sched -> "sched-preempt";
+	sched -> "sched-pri";
+	sched -> "sched-queue";
+	sched -> "sched-surrender";
+	sched -> "sched-tick";
+	"sched-cpu" -> "sched-off-cpu";
+	"sched-cpu" -> "sched-on-cpu";
+	"sched-cpu" -> "sched-remain-cpu";
+	"sched-exec" -> "sched-sleep";
+	"sched-exec" -> "sched-wakeup";
+	"sched-pri" -> "sched-change-pri";
+	"sched-pri" -> "sched-lend-pri";
+	"sched-queue" -> "sched-dequeue";
+	"sched-queue" -> "sched-enqueue";
+	"sched-queue" -> "sched-load-change";
+}

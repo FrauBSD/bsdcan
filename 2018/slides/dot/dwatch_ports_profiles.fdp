@@ -1,0 +1,58 @@
+/* vim: set filetype=dot :: Vi/ViM */
+strict digraph {
+
+	/*
+	 * Graph setup and orientation
+	 */
+	margin = 0; // minimize white border
+
+	/*
+	 * Default node attributes
+	 */
+	node [
+		fontname = "Arial",
+		fontsize = 16,
+		fontcolor = "white",
+		shape = box,
+		style = "filled",
+		colorscheme = "set15",
+		penwidth = 0,
+	];
+
+	/*
+	 * Aliases
+	 */
+	{
+		node [ fillcolor = 5 ];
+		"gource-net";
+		"gource-net-raw";
+		"gource-open";
+		"gource-open-raw";
+		"gource-proc";
+		"gource-proc-raw";
+		"gource-syscall";
+		"gource-syscall-raw";
+		"gource-vfs";
+		"gource-vfs-raw";
+		pwsnoop;
+	};
+
+	/*
+	 * Functions
+	 */
+	{
+		node [ fillcolor = 3 ];
+		dnode_willuse_space;
+	};
+
+	/*
+	 * Relationships
+	 */
+	{
+		"gource-net" -> "gource-net-raw";
+		"gource-open" -> "gource-open-raw";
+		"gource-proc" -> "gource-proc-raw";
+		"gource-syscall" -> "gource-syscall-raw";
+		"gource-vfs" -> "gource-vfs-raw";
+	};
+}

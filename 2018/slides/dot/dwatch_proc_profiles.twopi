@@ -1,0 +1,67 @@
+/* vim: set filetype=dot :: Vi/ViM */
+strict digraph {
+
+	/*
+	 * Graph setup and orientation
+	 */
+	margin = 0; // minimize white border
+
+	/*
+	 * Default node attributes
+	 */
+	node [
+		fontname = "Arial",
+		fontsize = 16,
+		fontcolor = "white",
+		shape = box,
+		style = "filled",
+		colorscheme = "set15",
+		penwidth = 0,
+	];
+
+	/*
+	 * Aliases
+	 */
+	{
+		node [ fillcolor = 5 ];
+		"proc-signal";
+		"proc-status";
+	};
+
+	/*
+	 * Providers
+	 */
+	{
+		node [ fillcolor = 1 ];
+		proc;
+	};
+
+	/*
+	 * Names
+	 */
+	{
+		node [ fillcolor = 4 ];
+		"proc-create" [ label = "create" ];
+		"proc-exec" [ label = "exec" ];
+		"proc-exec-failure" [ label = "exec-failure" ];
+		"proc-exec-success" [ label = "exec-success" ];
+		"proc-exit" [ label = "exit" ];
+		"proc-signal-clear" [ label = "clear" ];
+		"proc-signal-discard" [ label = "discard" ];
+		"proc-signal-send" [ label = "send" ];
+	};
+
+	/*
+	 * Relationships
+	 */
+	proc -> "proc-signal";
+	proc -> "proc-status";
+	"proc-signal" -> "proc-signal-clear";
+	"proc-signal" -> "proc-signal-discard";
+	"proc-signal" -> "proc-signal-send";
+	"proc-status" -> "proc-create";
+	"proc-status" -> "proc-exec";
+	"proc-status" -> "proc-exec-failure";
+	"proc-status" -> "proc-exec-success";
+	"proc-status" -> "proc-exit";
+}
